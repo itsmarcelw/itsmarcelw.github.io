@@ -25,15 +25,38 @@
     .back-link:hover { text-decoration: underline; }
     
     h1 { font-size: 30px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -.02em; }
-    .sub { color: var(--muted); font-size: 15px; margin: 0 0 28px; max-width: 60ch; }
+    .sub { color: var(--muted); font-size: 15px; margin: 0 0 24px; max-width: 60ch; }
     
-    /* Liste med videoer */
-    .video-liste { list-style: none; padding: 0; margin: 0 0 40px; display: flex; flex-direction: column; gap: 12px; }
-    .video-item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: inherit; transition: border-color .15s; }
-    .video-item:hover { border-color: var(--accent); }
-    .video-titel { font-weight: 600; font-size: 16px; margin: 0; }
-    .video-dato { color: var(--muted); font-size: 13px; margin-top: 2px; }
-    .video-link-tekst { color: var(--accent); font-weight: 600; font-size: 14px; white-space: nowrap; }
+    /* Kategori Faneblade (Tabs) */
+    .category-tabs { display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+    .category-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 8px 16px; border-radius: 99px; border: 1px solid var(--line); background: var(--card);
+      color: var(--ink); font-size: 13.5px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all .15s;
+    }
+    .tab-btn:hover { border-color: var(--accent); }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* Liste med video-kort */
+    .video-liste { list-style: none; padding: 0; margin: 0 0 40px; display: flex; flex-direction: column; gap: 14px; }
+    .video-card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+      overflow: hidden; text-decoration: none; color: inherit; display: flex; gap: 16px;
+      transition: border-color .15s, transform .15s;
+    }
+    .video-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    
+    .video-thumb {
+      width: 150px; height: 95px; background: var(--accentbg); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 28px; color: var(--accent);
+      position: relative; overflow: hidden;
+    }
+    .video-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .video-info { padding: 12px 16px 12px 0; display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
+    .video-titel { font-weight: 600; font-size: 16px; margin: 0 0 4px; line-height: 1.3; }
+    .video-dato { color: var(--muted); font-size: 13px; margin: 0 0 6px; }
+    .video-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--accentbg); color: var(--accent); text-transform: uppercase; width: fit-content; }
 
     .loading-text { color: var(--muted); font-style: italic; }
 
@@ -43,7 +66,7 @@
     
     .form-group { margin-bottom: 16px; }
     label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; text-transform: uppercase; color: var(--muted); }
-    input[type="text"], input[type="url"] {
+    input[type="text"], input[type="url"], select {
       width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid var(--line);
       border-radius: 8px; background: var(--bg); color: var(--ink);
     }
@@ -63,6 +86,12 @@
     .status-box { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; display: none; }
     .status-box.success { background: var(--okbg); color: var(--ok); }
     .status-box.error { background: var(--badbg); color: var(--bad); }
+
+    @media (max-width: 480px) {
+      .video-card { flex-direction: column; gap: 0; }
+      .video-thumb { width: 100%; height: 160px; }
+      .video-info { padding: 12px 16px; }
+    }
   </style>
 </head>
 <body>
@@ -71,10 +100,19 @@
     
     <header>
       <h1>Kampvideoer</h1>
-      <p class="sub">Her kan du finde optagelser af vores kampe fra sæsonen.</p>
+      <p class="sub">Her kan du finde optagelser af vores kampe og træningskampe.</p>
     </header>
 
     <main>
+      <!-- SÆSON / KATEGORI FANEBLADE -->
+      <nav class="category-tabs">
+        <button class="tab-btn active" onclick="filtrerKategori('Kampe 26/27', this)">Kampe 26/27</button>
+        <button class="tab-btn" onclick="filtrerKategori('Træningskampe 26/27', this)">Træningskampe 26/27</button>
+        <button class="tab-btn" onclick="filtrerKategori('Kampe 25/26', this)">Kampe 25/26</button>
+        <button class="tab-btn" onclick="filtrerKategori('Træningskampe 25/26', this)">Træningskampe 25/26</button>
+        <button class="tab-btn" onclick="filtrerKategori('Alle', this)">Alle</button>
+      </nav>
+
       <!-- LISTE OVER VIDEOER -->
       <ul class="video-liste" id="video-liste">
         <li class="loading-text" id="loading-msg">Henter kampvideoer...</li>
@@ -91,10 +129,19 @@
         <div id="fejl-tekst" class="error-msg">Forkert kode.</div>
       </section>
 
-      <!-- FORMULAR TIL AT TILFØJE VIDEOER (LÅST INDTIL KODE INDTASTES) -->
+      <!-- FORMULAR TIL AT TILFØJE VIDEOER -->
       <section class="card" id="traener-indhold">
         <h2>📹 Tilføj ny kampvideo</h2>
         <form onsubmit="tilfoejVideo(event)">
+          <div class="form-group">
+            <label for="kategori">Vælg Kategori / Sæson</label>
+            <select id="kategori" required>
+              <option value="Kampe 26/27">Kampe 26/27</option>
+              <option value="Træningskampe 26/27">Træningskampe 26/27</option>
+              <option value="Kampe 25/26">Kampe 25/26</option>
+              <option value="Træningskampe 25/26">Træningskampe 25/26</option>
+            </select>
+          </div>
           <div class="form-group">
             <label for="titel">Kamp / Titel</label>
             <input type="text" id="titel" placeholder="f.eks. Hjemmekamp mod Randers" required>
@@ -118,45 +165,78 @@
   <script>
     // -------------------------------------------------------------
     // 1. INDSÆT DIN WEBAPP-URL FRA GOOGLE APPS SCRIPT HER:
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnPS5o3qlHCTTL6lK66BFJXKl23PgHLcU_khLxrOtiYUvPQfPfCPepiwwgF0yBZ3tg/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxVQMSv2D-BSVqORPjdPV9Cb6OVqWQ92AxwpkKjELwXBqqhoMZT0tZhjARc0eFKnSc/exec";
 
     // 2. TRÆNERKODE:
     const TRÆNER_KODE = "1234";
     // -------------------------------------------------------------
 
-    // Hent og vis videoer fra Google Sheet ved indlæsning
+    let alleVideoer = [];
+    let valgtKategori = "Kampe 26/27";
+
+    // Trækker YouTube Thumbnail ud fra et YouTube-link
+    function hentYouTubeThumbnail(url) {
+      if (!url) return null;
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg` : null;
+    }
+
+    // Hent videoer fra Google Sheet
     async function hentVideoer() {
       const container = document.getElementById("video-liste");
       try {
         const response = await fetch(APPS_SCRIPT_URL);
-        const videoer = await response.json();
-        
-        container.innerHTML = "";
-
-        if (!videoer || videoer.length === 0) {
-          container.innerHTML = '<li class="loading-text">Ingen kampvideoer tilføjet endnu.</li>';
-          return;
-        }
-
-        // Vis nyeste videoer øverst
-        videoer.reverse().forEach(v => {
-          const a = document.createElement("a");
-          a.href = v.link;
-          a.target = "_blank";
-          a.className = "video-item";
-          a.innerHTML = `
-            <div>
-              <p class="video-titel">${v.titel}</p>
-              <p class="video-dato">${v.dato}</p>
-            </div>
-            <span class="video-link-tekst">Se video →</span>
-          `;
-          container.appendChild(a);
-        });
-
+        alleVideoer = await response.json();
+        visVideoer();
       } catch (err) {
         container.innerHTML = '<li class="loading-text" style="color: var(--bad);">Der opstod en fejl ved indlæsning af videoer.</li>';
       }
+    }
+
+    function filtrerKategori(kat, btnElement) {
+      valgtKategori = kat;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+      visVideoer();
+    }
+
+    function visVideoer() {
+      const container = document.getElementById("video-liste");
+      container.innerHTML = "";
+
+      // Filtrér efter den valgte kategori
+      const filtrerede = valgtKategori === "Alle" 
+        ? alleVideoer 
+        : alleVideoer.filter(v => (v.kategori || "Kampe 26/27") === valgtKategori);
+
+      if (!filtrerede || filtrerede.length === 0) {
+        container.innerHTML = `<li class="loading-text">Ingen kampvideoer fundet under '${valgtKategori}'.</li>`;
+        return;
+      }
+
+      // Vis nyeste videoer øverst
+      [...filtrerede].reverse().forEach(v => {
+        const thumbUrl = hentYouTubeThumbnail(v.link);
+        const a = document.createElement("a");
+        a.href = v.link;
+        a.target = "_blank";
+        a.className = "video-card";
+        
+        const thumbHTML = thumbUrl 
+          ? `<div class="video-thumb"><img src="${thumbUrl}" alt="Thumbnail" loading="lazy"></div>`
+          : `<div class="video-thumb">🎥</div>`;
+
+        a.innerHTML = `
+          ${thumbHTML}
+          <div class="video-info">
+            <span class="video-tag">${v.kategori || 'Kamp'}</span>
+            <p class="video-titel">${v.titel}</p>
+            <p class="video-dato">${v.dato}</p>
+          </div>
+        `;
+        container.appendChild(a);
+      });
     }
 
     // Gem ny video i Google Sheet
@@ -170,6 +250,7 @@
       statusMsg.style.display = "none";
 
       const nyVideo = {
+        kategori: document.getElementById("kategori").value,
         titel: document.getElementById("titel").value,
         dato: document.getElementById("dato").value,
         link: document.getElementById("link").value
@@ -188,7 +269,7 @@
           statusMsg.textContent = "✓ Videoen er gemt og tilføjet til siden!";
           statusMsg.style.display = "block";
           e.target.reset();
-          hentVideoer(); // Opdater listen på siden med det samme
+          hentVideoer(); // Genindlæs listen
         } else {
           throw new Error(res.message);
         }
@@ -202,7 +283,6 @@
       }
     }
 
-    // Kodelås funktioner
     function tjekKode(e) {
       e.preventDefault();
       const input = document.getElementById("kode-input").value;
@@ -223,7 +303,6 @@
       visIndhold();
     }
 
-    // Start hentning af videoer
     hentVideoer();
   </script>
 </body>
