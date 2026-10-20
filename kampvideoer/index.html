@@ -27,7 +27,7 @@
     h1 { font-size: 30px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -.02em; }
     .sub { color: var(--muted); font-size: 15px; margin: 0 0 24px; max-width: 60ch; }
     
-    /* Kategori Faneblade (Tabs) */
+    /* Kategori Faneblade */
     .category-tabs { display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
     .category-tabs::-webkit-scrollbar { display: none; }
     .tab-btn {
@@ -60,7 +60,7 @@
 
     .loading-text { color: var(--muted); font-style: italic; }
 
-    /* Trænersektion & Formulardesign */
+    /* Trænersektion */
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; margin-top: 32px; }
     .card h2 { margin-top: 0; font-size: 20px; }
     
@@ -165,7 +165,7 @@
   <script>
     // -------------------------------------------------------------
     // 1. INDSÆT DIN WEBAPP-URL FRA GOOGLE APPS SCRIPT HER:
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxVQMSv2D-BSVqORPjdPV9Cb6OVqWQ92AxwpkKjELwXBqqhoMZT0tZhjARc0eFKnSc/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz456XrAofoqV0uBnYEWzldXj91MSaOpeqxN8g3prFH-slS6lk73Q9s7pMjjXTAKg5V/exec";
 
     // 2. TRÆNERKODE:
     const TRÆNER_KODE = "1234";
@@ -174,7 +174,6 @@
     let alleVideoer = [];
     let valgtKategori = "Kampe 26/27";
 
-    // Trækker YouTube Thumbnail ud fra et YouTube-link
     function hentYouTubeThumbnail(url) {
       if (!url) return null;
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -182,11 +181,11 @@
       return (match && match[2].length === 11) ? `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg` : null;
     }
 
-    // Hent videoer fra Google Sheet
     async function hentVideoer() {
       const container = document.getElementById("video-liste");
       try {
-        const response = await fetch(APPS_SCRIPT_URL);
+        // Tvinger browseren til altid at hente helt nye data uden at bruge sin hukommelse
+        const response = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), { cache: "no-store" });
         alleVideoer = await response.json();
         visVideoer();
       } catch (err) {
@@ -205,17 +204,18 @@
       const container = document.getElementById("video-liste");
       container.innerHTML = "";
 
-      // Filtrér efter den valgte kategori
       const filtrerede = valgtKategori === "Alle" 
         ? alleVideoer 
-        : alleVideoer.filter(v => (v.kategori || "Kampe 26/27") === valgtKategori);
+        : alleVideoer.filter(v => {
+            const kat = (v.kategori && v.kategori !== "Kamp") ? v.kategori.trim() : "Kampe 26/27";
+            return kat.toLowerCase() === valgtKategori.trim().toLowerCase();
+          });
 
       if (!filtrerede || filtrerede.length === 0) {
         container.innerHTML = `<li class="loading-text">Ingen kampvideoer fundet under '${valgtKategori}'.</li>`;
         return;
       }
 
-      // Vis nyeste videoer øverst
       [...filtrerede].reverse().forEach(v => {
         const thumbUrl = hentYouTubeThumbnail(v.link);
         const a = document.createElement("a");
@@ -227,10 +227,12 @@
           ? `<div class="video-thumb"><img src="${thumbUrl}" alt="Thumbnail" loading="lazy"></div>`
           : `<div class="video-thumb">🎥</div>`;
 
+        const visKategori = (v.kategori && v.kategori !== "Kamp") ? v.kategori : "Kampe 26/27";
+
         a.innerHTML = `
           ${thumbHTML}
           <div class="video-info">
-            <span class="video-tag">${v.kategori || 'Kamp'}</span>
+            <span class="video-tag">${visKategori}</span>
             <p class="video-titel">${v.titel}</p>
             <p class="video-dato">${v.dato}</p>
           </div>
@@ -239,7 +241,6 @@
       });
     }
 
-    // Gem ny video i Google Sheet
     async function tilfoejVideo(e) {
       e.preventDefault();
       const btn = document.getElementById("submit-btn");
@@ -269,7 +270,7 @@
           statusMsg.textContent = "✓ Videoen er gemt og tilføjet til siden!";
           statusMsg.style.display = "block";
           e.target.reset();
-          hentVideoer(); // Genindlæs listen
+          hentVideoer();
         } else {
           throw new Error(res.message);
         }
