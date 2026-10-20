@@ -159,7 +159,14 @@
   const SHEET_URL_KEY = 'volley_sheet_url';
   const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwA-C_js3BOoWJy5dvt0qe9ZuidBu87bLvylfGdteFvvxDL7ZCbTmRCpvPhBFTBznVr/exec';
 
-  let currentPin = localStorage.getItem(PIN_KEY) || '1234';
+  let currentPin = '1234';
+  try {
+    const savedPin = localStorage.getItem(PIN_KEY);
+    if (savedPin) currentPin = savedPin;
+  } catch(e) {
+    console.warn('Storage ikke tilgængelig, bruger standard-PIN');
+  }
+
   let currentStatData = null;
   let activeStatView = 'total';
 
@@ -169,25 +176,34 @@
   const pinInput = document.getElementById('pinInput');
   const lockError = document.getElementById('lockError');
 
-  if (sessionStorage.getItem('volley_stat_unlocked') === 'true') {
-    lockScreen.classList.add('hidden');
+  try {
+    if (sessionStorage.getItem('volley_stat_unlocked') === 'true') {
+      if (lockScreen) lockScreen.classList.add('hidden');
+    }
+  } catch(e) {}
+
+  if (lockForm) {
+    lockForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const enteredPin = pinInput ? pinInput.value.trim() : '';
+
+      if (enteredPin === currentPin) {
+        if (lockScreen) lockScreen.classList.add('hidden');
+        if (lockError) lockError.style.display = 'none';
+        try {
+          sessionStorage.setItem('volley_stat_unlocked', 'true');
+        } catch(e) {}
+      } else {
+        if (lockError) lockError.style.display = 'block';
+      }
+    });
   }
 
-  lockForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (pinInput.value.trim() === currentPin) {
-      sessionStorage.setItem('volley_stat_unlocked', 'true');
-      lockScreen.classList.add('hidden');
-    } else {
-      lockError.style.display = 'block';
-    }
-  });
-
-  document.getElementById('changePinBtn').addEventListener('click', () => {
+  document.getElementById('changePinBtn')?.addEventListener('click', () => {
     const val = document.getElementById('newPinInput').value.trim();
     if (val) {
       currentPin = val;
-      localStorage.setItem(PIN_KEY, val);
+      try { localStorage.setItem(PIN_KEY, val); } catch(e) {}
       document.getElementById('newPinInput').value = '';
       alert('Adgangskoden er opdateret!');
     }
@@ -247,4 +263,234 @@
   // 3. RENDER FUNKTION
   function renderStatDisplay() {
     const container = document.getElementById('statDisplayContent');
-    const sendBtn = document.getElementById('sendToSheetBtn
+    const sendBtn = document.getElementById('sendToSheetBtn');
+
+    if (!currentStatData || !currentStatData.sections.length) {
+      if (container) {
+        container.innerHTML = `<div style="text-align:center; padding: 40px 10px; color:var(--muted)"><strong>Fejl ved indlæsning af statistik data</strong></div>`;
+      }
+      if (sendBtn) sendBtn.disabled = true;
+      return;
+    }
+
+    if (sendBtn) sendBtn.disabled = false;
+
+    // Samlet resultat
+    let totalSetsWon = 0, totalSetsLost = 0, oppName = 'Modstander';
+    currentStatData.scoreOverview.forEach(s => {
+      oppName = s.opp || oppName;
+      if (parseInt(s.ourScore) > parseInt(s.oppScore)) totalSetsWon++;
+      else if (parseInt(s.ourScore) < parseInt(s.oppScore)) totalSetsLost++;
+    });
+
+    // Subtabs
+    let subtabsHtml = `<div class="stat-subtabs">`;
+    currentStatData.sections.forEach((sec, idx) => {
+      const key = idx === currentStatData.sections.length - 1 ? 'total' : `set-${idx+1}`;
+      const active = activeStatView === key ? 'active' : '';
+      subtabsHtml += `<button class="${active}" data-statview="${key}">${sec.title}</button>`;
+    });
+    subtabsHtml += `</div>`;
+
+    // Aktuel sektion
+    let targetSecIdx = currentStatData.sections.length - 1;
+    if (activeStatView.startsWith('set-')) {
+      const setNum = parseInt(activeStatView.replace('set-', '')) - 1;
+      if (setNum >= 0 && setNum < currentStatData.sections.length - 1) targetSecIdx = setNum;
+    }
+    const sec = currentStatData.sections[targetSecIdx];
+
+    // Nøgletal
+    const totalRow = sec.rows[sec.rows.length - 1] || [];
+    const totalPoints = totalRow[1] || '-';
+    const totalKills = totalRow[6] || '-';
+    const hitPct = totalRow[8] || '-';
+    const totalBlocks = totalRow[9] || '-';
+    const totalAces = totalRow[18] || '-';
+
+    let html = `
+      <div class="scorecard">
+        <div class="team">Aalborg Volleyball</div>
+        <div class="score">${totalSetsWon} – ${totalSetsLost}</div>
+        <div class="team">${oppName}</div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><b>${hitPct}</b><span>Hit Pct</span></div>
+        <div class="kpi"><b>${totalKills}</b><span>Kills</span></div>
+        <div class="kpi"><b>${totalAces}</b><span>Aces</span></div>
+        <div class="kpi"><b>${totalBlocks}</b><span>Blocks</span></div>
+        <div class="kpi"><b>${totalPoints}</b><span>Point Spillet</span></div>
+      </div>
+
+      ${subtabsHtml}
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="n">Spiller</th>
+              <th>Spillet</th>
+              <th>+/-</th>
+              <th>Kills</th>
+              <th>Fejl</th>
+              <th>Swings</th>
+              <th>Hit Pct</th>
+              <th>Blocks</th>
+              <th>Assist</th>
+              <th>Digs</th>
+              <th>Rec</th>
+              <th>Serves</th>
+              <th>Aces</th>
+              <th>Srv Err</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    sec.rows.forEach((r, idx) => {
+      const isTotalRow = idx === sec.rows.length - 1;
+      const pName = r[0] || (isTotalRow ? 'I alt / Hold' : 'Ukendt');
+      const ptsPlayed = r[1] || '0';
+      const plusMinus = r[2] || '0';
+      const swings = r[5] || '0';
+      const kills = r[6] || '0';
+      const hitErr = r[7] || '0';
+      const hPct = r[8] || '0.000';
+      const blocks = r[9] || '0';
+      const assists = r[12] || '0';
+      const digs = r[13] || '0';
+      const rec = r[15] || '0';
+      const serves = r[17] || '0';
+      const aces = r[18] || '0';
+      const srvErr = r[19] || '0';
+
+      const pmVal = parseFloat(plusMinus.replace(',', '.'));
+      const pmClass = pmVal > 0 ? 'pos-val' : (pmVal < 0 ? 'neg-val' : '');
+
+      html += `
+        <tr style="${isTotalRow ? 'font-weight:700; background:var(--card-sub);' : ''}">
+          <td class="n">${pName}</td>
+          <td>${ptsPlayed}</td>
+          <td class="${pmClass}">${plusMinus}</td>
+          <td style="color:var(--ok); font-weight:600">${kills}</td>
+          <td>${hitErr}</td>
+          <td>${swings}</td>
+          <td><b>${hPct}</b></td>
+          <td>${blocks}</td>
+          <td>${assists}</td>
+          <td>${digs}</td>
+          <td>${rec}</td>
+          <td>${serves}</td>
+          <td style="color:var(--accent); font-weight:700">${aces}</td>
+          <td>${srvErr}</td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table></div>`;
+    if (container) container.innerHTML = html;
+  }
+
+  // Event handlers for fanebladsskift
+  document.getElementById('statDisplayCard')?.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-statview]');
+    if (!btn) return;
+    activeStatView = btn.dataset.statview;
+    renderStatDisplay();
+  });
+
+  // Fil uploader
+  document.getElementById('statFileInput')?.addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      try { localStorage.setItem(DATA_KEY, text); } catch(err) {}
+      currentStatData = parseStatHtml(text);
+      activeStatView = 'total';
+      renderStatDisplay();
+    } catch(err) {
+      alert('Fejl ved indlæsning af fil: ' + err.message);
+    }
+  });
+
+  document.getElementById('loadLastBtn')?.addEventListener('click', () => {
+    let text = null;
+    try { text = localStorage.getItem(DATA_KEY); } catch(e) {}
+    if (text) {
+      currentStatData = parseStatHtml(text);
+      activeStatView = 'total';
+      renderStatDisplay();
+    } else {
+      alert('Ingen tidligere gemt kamp fundet.');
+    }
+  });
+
+  // Autoload hvis der ligger en tidligere kamp
+  try {
+    const savedText = localStorage.getItem(DATA_KEY);
+    if (savedText) {
+      currentStatData = parseStatHtml(savedText);
+      renderStatDisplay();
+    }
+  } catch(e) {}
+
+  // 4. GOOGLE REGNEARK SYNC
+  const urlInput = document.getElementById('sheetWebappUrl');
+  let initialUrl = DEFAULT_SHEET_URL;
+  try {
+    initialUrl = localStorage.getItem(SHEET_URL_KEY) || DEFAULT_SHEET_URL;
+  } catch(e) {}
+  
+  if (urlInput) {
+    urlInput.value = initialUrl;
+    urlInput.addEventListener('change', e => {
+      try { localStorage.setItem(SHEET_URL_KEY, e.target.value.trim()); } catch(err) {}
+    });
+  }
+
+  document.getElementById('sendToSheetBtn')?.addEventListener('click', async () => {
+    const url = urlInput ? urlInput.value.trim() : DEFAULT_SHEET_URL;
+    const statusEl = document.getElementById('sheetStatus');
+    if (!url) {
+      alert('Indtast venligst din Google WebApp URL i feltet ovenfor.');
+      return;
+    }
+    if (!currentStatData) return;
+
+    if (statusEl) statusEl.textContent = 'Sender til Google Regneark...';
+    try {
+      const totalSec = currentStatData.sections[currentStatData.sections.length - 1];
+      const opp = currentStatData.scoreOverview[0]?.opp || 'Kamp';
+      const dateStr = new Date().toISOString().slice(0, 10);
+
+      const payload = {
+        sheetName: `${opp}_${dateStr}`,
+        scoreOverview: currentStatData.scoreOverview,
+        totalRows: totalSec.rows
+      };
+
+      await fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (statusEl) {
+        statusEl.textContent = '✓ Sendt til Google Regneark!';
+        statusEl.style.color = 'var(--ok)';
+      }
+    } catch(err) {
+      if (statusEl) {
+        statusEl.textContent = 'Fejl ved sending: ' + err.message;
+        statusEl.style.color = 'var(--bad)';
+      }
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
