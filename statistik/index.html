@@ -1,1 +1,250 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kampstatistik – Aalborg Volleyball Herre 4</title>
+  <meta name="robots" content="noindex">
+  <style>
+    :root {
+      --bg: #f6f7f9; --card: #ffffff; --card-sub: #efe9df; --line: #e3e6eb;
+      --ink: #16181d; --muted: #6b7280; --faint: #9aa1ac;
+      --accent: #1b4f9c; --accent-soft: #eaf0fa;
+      --ok: #0f7b4f; --ok-soft: #e7f5ee; --bad: #a11d1d; --bad-soft: #fbeaea;
+      --radius: 12px; --shadow: 0 4px 16px rgba(0,0,0,0.06);
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101216; --card: #181b21; --card-sub: #242832; --line: #2a2f38;
+        --ink: #e8eaed; --muted: #9aa1ac; --faint: #64748b;
+        --accent: #7fa8ec; --accent-soft: #1c2a44;
+        --ok: #5fd39b; --ok-soft: #12291f; --bad: #f08a8a; --bad-soft: #2b1616;
+        --shadow: 0 4px 16px rgba(0,0,0,0.3);
+      }
+    }
 
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.5; font-size: 15px; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
+
+    /* Header & Navigation */
+    header.top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 4px; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    h1 { font-size: 26px; margin: 0; letter-spacing: -.02em; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 14px; padding: 6px 12px; background: var(--accent-soft); border-radius: 99px; }
+    .back-btn:hover { opacity: 0.85; }
+
+    /* Layout grid */
+    .grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+    .card h2 { font-size: 18px; margin: 0 0 6px; }
+    .sub { color: var(--muted); font-size: 13.5px; margin: 0 0 16px; }
+
+    /* Knapper og input */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 9px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background .15s; width: 100%; text-align: center; }
+    .btn:hover { background: var(--card-sub); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.primary:hover { filter: brightness(1.1); }
+    input[type=text], input[type=password] { width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 14px; margin-bottom: 10px; }
+
+    /* Scorecard & KPIs */
+    .scorecard { display: flex; align-items: center; justify-content: space-between; background: var(--card-sub); padding: 16px 20px; border-radius: 10px; margin-bottom: 16px; }
+    .scorecard .team { font-weight: 700; font-size: 16px; }
+    .scorecard .score { font-size: 28px; font-weight: 800; color: var(--accent); }
+
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .kpi { background: var(--card-sub); border-radius: 8px; padding: 10px 12px; }
+    .kpi b { display: block; font-size: 18px; font-weight: 700; }
+    .kpi span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+
+    /* Subtabs */
+    .stat-subtabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .stat-subtabs button { background: var(--card-sub); border: 1px solid var(--line); color: var(--ink); padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .stat-subtabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* Tabeller */
+    .tablewrap { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
+    table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+    th, td { padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    th { font-weight: 600; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; background: var(--card); }
+    td.n, th.n { text-align: left; position: sticky; left: 0; background: var(--card); z-index: 1; font-weight: 600; }
+
+    .pos-val { color: var(--ok); font-weight: 600; }
+    .neg-val { color: var(--bad); font-weight: 600; }
+
+    /* Låseskærm Overlay */
+    #lockScreen { position: fixed; inset: 0; background: rgba(16,18,22,0.92); backdrop-filter: blur(4px); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .lock-card { background: var(--card); color: var(--ink); border-radius: 14px; padding: 28px; width: 100%; max-width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; border: 1px solid var(--line); }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- TRÆNER LOGIN / LÅSESKÆRM -->
+<div id="lockScreen">
+  <div class="lock-card">
+    <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
+    <h2 style="margin: 0 0 4px;">Træner-Login</h2>
+    <p class="sub" style="margin-bottom: 16px;">Indtast kode for adgang til kampstatistik</p>
+    <form id="lockForm">
+      <input type="password" id="pinInput" placeholder="Kode (standard: 1234)" style="text-align:center; font-size: 1.1rem; letter-spacing: 2px;" required autofocus>
+      <button class="btn primary" type="submit">Lås op</button>
+      <div id="lockError" style="color:var(--bad); font-size: 12px; margin-top: 10px; display: none; font-weight: 600;">Forkert adgangskode</div>
+    </form>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Træner Værktøjer</p>
+      <h1>Kampstatistik</h1>
+    </div>
+    <a href="../" class="back-btn">← Tilbage til Portalen</a>
+  </header>
+
+  <main class="grid">
+    <!-- VENSTRE KOLONNE: VÆRKTØJER & IMPORT -->
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div class="card">
+        <h2>Importer Kamp</h2>
+        <p class="sub">Upload en HTML-statistikfil eksporteret fra videoanalysen.</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <label class="btn primary" for="statFileInput" style="cursor:pointer">
+            📁 Vælg HTML-statistikfil
+          </label>
+          <input type="file" id="statFileInput" accept=".html,.htm" class="hidden">
+          <button class="btn" id="loadLastBtn">⚡ Indlæs seneste gemte kamp</button>
+        </div>
+      </div>
+
+      <!-- GOOGLE SHEETS / REGNEARK INTEGRATION -->
+      <div class="card">
+        <h2>Google Regneark Sync</h2>
+        <p class="sub">Gem kampens data som en ny fane i et fælles Google Regneark.</p>
+        <input type="text" id="sheetWebappUrl" value="https://script.google.com/macros/s/AKfycbwA-C_js3BOoWJy5dvt0qe9ZuidBu87bLvylfGdteFvvxDL7ZCbTmRCpvPhBFTBznVr/exec" placeholder="Indsæt Google Script WebApp URL">
+        <button class="btn primary" id="sendToSheetBtn" disabled>📊 Gem i Google Regneark</button>
+        <p id="sheetStatus" style="font-size:12px; color:var(--muted); margin: 8px 0 0; text-align:center;"></p>
+      </div>
+
+      <!-- KODE SKIFT -->
+      <div class="card">
+        <h2>Sikkerhed</h2>
+        <p class="sub">Skift træner-adgangskoden til kampsiden.</p>
+        <input type="password" id="newPinInput" placeholder="Ny adgangskode">
+        <button class="btn" id="changePinBtn">Opdater kode</button>
+      </div>
+    </div>
+
+    <!-- HØJRE KOLONNE: STATISTIK VISNING -->
+    <div class="card" id="statDisplayCard">
+      <div id="statDisplayContent">
+        <div style="text-align:center; padding: 40px 10px; color:var(--muted)">
+          <div style="font-size:36px; margin-bottom:8px;">📈</div>
+          <strong>Ingen statistik indlæst endnu</strong><br>
+          <span style="font-size:13px">Importer en HTML-fil fra kampanalysen til venstre.</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(() => {
+  const PIN_KEY = 'volley_stat_pin';
+  const DATA_KEY = 'volley_stat_last_html';
+  const SHEET_URL_KEY = 'volley_sheet_url';
+  const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwA-C_js3BOoWJy5dvt0qe9ZuidBu87bLvylfGdteFvvxDL7ZCbTmRCpvPhBFTBznVr/exec';
+
+  let currentPin = localStorage.getItem(PIN_KEY) || '1234';
+  let currentStatData = null;
+  let activeStatView = 'total';
+
+  // 1. PIN LOCK LOGIK
+  const lockScreen = document.getElementById('lockScreen');
+  const lockForm = document.getElementById('lockForm');
+  const pinInput = document.getElementById('pinInput');
+  const lockError = document.getElementById('lockError');
+
+  if (sessionStorage.getItem('volley_stat_unlocked') === 'true') {
+    lockScreen.classList.add('hidden');
+  }
+
+  lockForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (pinInput.value.trim() === currentPin) {
+      sessionStorage.setItem('volley_stat_unlocked', 'true');
+      lockScreen.classList.add('hidden');
+    } else {
+      lockError.style.display = 'block';
+    }
+  });
+
+  document.getElementById('changePinBtn').addEventListener('click', () => {
+    const val = document.getElementById('newPinInput').value.trim();
+    if (val) {
+      currentPin = val;
+      localStorage.setItem(PIN_KEY, val);
+      document.getElementById('newPinInput').value = '';
+      alert('Adgangskoden er opdateret!');
+    }
+  });
+
+  // 2. STATISTIK HTML PARSER
+  function parseStatHtml(htmlStr) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlStr, 'text/html');
+    const tables = doc.querySelectorAll('table');
+    if (!tables.length) return null;
+
+    // Sæt-stilling overblik
+    const scoreOverview = [];
+    const overviewRows = tables[0].querySelectorAll('tr');
+    overviewRows.forEach((tr, idx) => {
+      if (idx === 0) return;
+      const tds = tr.querySelectorAll('td');
+      if (tds.length >= 4) {
+        scoreOverview.push({
+          set: tds[0].textContent.trim(),
+          opp: tds[1].textContent.trim(),
+          ourScore: tds[2].textContent.trim(),
+          oppScore: tds[3].textContent.trim()
+        });
+      }
+    });
+
+    // Sæt & Total detaljer
+    const sections = [];
+    const h2Elements = doc.querySelectorAll('h2');
+    h2Elements.forEach(h2 => {
+      const title = h2.textContent.trim();
+      let nextEl = h2.nextElementSibling;
+      while (nextEl && nextEl.tagName !== 'TABLE') {
+        nextEl = nextEl.nextElementSibling;
+      }
+      if (nextEl && nextEl.tagName === 'TABLE') {
+        const rows = [];
+        const trs = nextEl.querySelectorAll('tr');
+        trs.forEach(tr => {
+          if (tr.querySelector('th')) return;
+          const tds = tr.querySelectorAll('td');
+          if (tds.length > 0) {
+            const rowData = [];
+            tds.forEach(td => rowData.push(td.textContent.trim().replace(/\s+/g, ' ')));
+            rows.push(rowData);
+          }
+        });
+        sections.push({ title, rows });
+      }
+    });
+
+    return { scoreOverview, sections };
+  }
+
+  // 3. RENDER FUNKTION
+  function renderStatDisplay() {
+    const container = document.getElementById('statDisplayContent');
+    const sendBtn = document.getElementById('sendToSheetBtn
