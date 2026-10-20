@@ -16,41 +16,64 @@
   --text-base:clamp(1rem,.95rem + .25vw,1.125rem);
   --text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
   --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  
+  /* Lyst Tema (Default) */
   --bg:#f5f1ea; --surface:#fffdf9; --surface-2:#efe9df; --border:#ddd4c6;
   --text:#1c2333; --muted:#5f6675; --faint:#8a8f9a;
   --navy:#1f3a5f; --accent:#d9622b; --accent-soft:#fbe4d6;
   --ok:#2f7d5b; --ok-soft:#dcefe5; --warn:#a15c00; --warn-soft:#fbecd3;
+  --field-bg:#f3e3cf; --field-border:#c9a77c; --slot-bg:#ffffff;
   --radius:10px; --shadow:0 1px 2px rgba(28,35,51,.06),0 4px 14px rgba(28,35,51,.05);
 }
+
+body.dark {
+  /* Mørkt Tema */
+  --bg:#121824; --surface:#1a2332; --surface-2:#243044; --border:#324158;
+  --text:#e6edf8; --muted:#94a3b8; --faint:#64748b;
+  --navy:#0f1d30; --accent:#e8743b; --accent-soft:#4a2818;
+  --ok:#34a853; --ok-soft:#1a3a2a; --warn:#f59e0b; --warn-soft:#3d2e14;
+  --field-bg:#26201a; --field-border:#5c4530; --slot-bg:#1e293b;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+}
+
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--text);font-family:'General Sans',system-ui,sans-serif;font-size:var(--text-base);line-height:1.5}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'General Sans',system-ui,sans-serif;font-size:var(--text-base);line-height:1.5;transition:background .2s,color .2s}
 button,input,select{font:inherit;color:inherit}
 h1,h2,h3{margin:0;line-height:1.2}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
-header.top{background:var(--navy);color:#fff}
-header.top .wrap{display:flex;align-items:center;gap:14px;padding-top:18px;padding-bottom:18px;flex-wrap:wrap}
-header.top h1{font-size:var(--text-xl);font-weight:700;letter-spacing:-.01em}
-header.top p{margin:0;color:#c9d3e3;font-size:var(--text-sm)}
-.brand{display:flex;align-items:center;gap:12px;flex:1;min-width:240px}
-nav.tabs{display:flex;gap:4px;background:rgba(255,255,255,.08);padding:4px;border-radius:999px}
-nav.tabs button{background:none;border:0;color:#dfe6f1;padding:8px 16px;border-radius:999px;cursor:pointer;font-size:var(--text-sm);font-weight:500}
+
+/* Toppanel Navigation */
+header.top{position:sticky;top:0;z-index:100;background:var(--navy);color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.15);transition:background .2s}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+header.top h1{font-size:var(--text-lg);font-weight:700;letter-spacing:-.01em;color:#fff}
+header.top p{margin:0;color:#c9d3e3;font-size:var(--text-xs)}
+.brand{display:flex;align-items:center;gap:12px;min-width:200px}
+
+nav.tabs{display:flex;gap:6px;background:rgba(255,255,255,.12);padding:4px;border-radius:999px}
+nav.tabs button{background:none;border:0;color:#dfe6f1;padding:8px 18px;border-radius:999px;cursor:pointer;font-size:var(--text-sm);font-weight:600;transition:background .2s,color .2s}
+nav.tabs button:hover{background:rgba(255,255,255,.18)}
 nav.tabs button[aria-selected=true]{background:#fff;color:var(--navy)}
+
+.nav-actions{display:flex;align-items:center;gap:10px}
+.theme-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:999px;cursor:pointer;font-size:var(--text-xs);font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:background .2s}
+.theme-btn:hover{background:rgba(255,255,255,.25)}
+
 main{padding:24px 0 60px}
 .grid{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:20px;align-items:start}
 .grid>*{min-width:0}
 @media (max-width:860px){.grid{grid-template-columns:1fr}}
 @media (max-width:480px){.wrap{padding:0 12px}th,td{padding:6px 5px}.cell{width:26px;height:26px}}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;transition:background .2s,border-color .2s}
 .card h2{font-size:var(--text-lg);font-weight:600;margin-bottom:4px}
 .card .sub{color:var(--muted);font-size:var(--text-sm);margin:0 0 14px}
 .stack>*+*{margin-top:16px}
 label.f{display:block;font-size:var(--text-sm);font-weight:500;margin-bottom:12px}
 label.f span.h{display:block;color:var(--muted);font-weight:400;font-size:var(--text-xs)}
-input[type=text],input[type=number],input[type=date],input[type=password],select{width:100%;margin-top:4px;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--text-sm)}
+input[type=text],input[type=number],input[type=date],input[type=password],select{width:100%;margin-top:4px;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:var(--text-sm)}
 input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--border);background:#fff;padding:9px 14px;border-radius:8px;cursor:pointer;font-size:var(--text-sm);font-weight:500;transition:background .15s,border-color .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:9px 14px;border-radius:8px;cursor:pointer;font-size:var(--text-sm);font-weight:500;transition:background .15s,border-color .15s}
 .btn:hover{background:var(--surface-2)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn.primary:hover{background:#c4541f}
@@ -81,21 +104,14 @@ td.n{font-weight:500}
 .cell.on{background:var(--accent);color:#fff}
 .cell.off{background:var(--surface-2);color:var(--faint);border-color:var(--border)}
 .cell:hover{filter:brightness(.95)}
-tr.tot td{font-weight:600;color:var(--muted);border-bottom:0}
-td.bad{color:#b3261e;font-weight:700}
-.bar{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;min-width:70px}
-.bar>i{display:block;height:100%;background:var(--navy);border-radius:99px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
 .kpi{background:var(--surface-2);border-radius:8px;padding:10px 12px}
 .kpi b{display:block;font-size:var(--text-lg);font-weight:700}
 .kpi span{font-size:var(--text-xs);color:var(--muted)}
-.note{border-radius:8px;padding:10px 12px;font-size:var(--text-sm);margin-bottom:14px}
-.note.ok{background:var(--ok-soft);color:#1d5a40}
-.note.warn{background:var(--warn-soft);color:#6e3f00}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:var(--text-xs);color:var(--muted);margin:10px 0 0}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
 .court{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:16px}
-.setbox{border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:#fff}
+.setbox{border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--surface)}
 .setbox h3{font-size:var(--text-sm);font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between}
 .hist{list-style:none;padding:0;margin:0}
 .hist li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:var(--text-sm)}
@@ -105,20 +121,20 @@ td.bad{color:#b3261e;font-weight:700}
 .toast.show{opacity:1}
 footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20px}
 @media print{
-  header.top nav,.noprint,footer{display:none!important}
-  body{background:#fff}.grid{grid-template-columns:1fr}.card{box-shadow:none;border:0;padding:0}
+  header.top nav,.noprint,footer,.theme-btn{display:none!important}
+  body{background:#fff;color:#000}.grid{grid-template-columns:1fr}.card{box-shadow:none;border:0;padding:0}
   .cell.on{background:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 .roster li{flex-wrap:wrap}
 .roster .pos{width:auto;margin:0;padding:4px 6px;font-size:var(--text-xs)}
 .altbtn{font-size:var(--text-xs);padding:4px 8px}
 .alts{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 0 2px 28px;font-size:var(--text-xs);color:var(--muted)}
-.chip{border:1px solid var(--border);background:#fff;border-radius:999px;padding:3px 10px;font-size:var(--text-xs);cursor:pointer;font-weight:500}
+.chip{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:999px;padding:3px 10px;font-size:var(--text-xs);cursor:pointer;font-weight:500}
 .chip[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
 .pb{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;border-radius:5px;font-size:var(--text-xs);font-weight:700;color:#fff;line-height:1}
 .pb.H{background:#1f3a5f}.pb.D{background:#6b46a8}.pb.K{background:#c4541f}.pb.C{background:#2f7d5b}.pb.L{background:#9a6b00}.pb.U,.pb.A{background:#5f6675}
 .cellp{display:inline-flex;width:30px;height:30px;border-radius:7px;align-items:center;justify-content:center;font-weight:700;font-size:var(--text-xs);color:#fff}
-.cellp.off{background:var(--surface-2);border:1px solid var(--border)}
+.cellp.off{background:var(--surface-2);border:1px solid var(--border);color:var(--faint)}
 .cellp.H{background:#1f3a5f}.cellp.D{background:#6b46a8}.cellp.K{background:#c4541f}.cellp.C{background:#2f7d5b}.cellp.L{background:#9a6b00}.cellp.A,.cellp.U{background:#5f6675}
 .cellp.sec{box-shadow:inset 0 0 0 2px #fff,0 0 0 2px #b3261e}
 .posov{width:100%;margin-top:12px;font-size:var(--text-xs)}
@@ -131,12 +147,12 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
 .issues li.ok{background:var(--ok-soft);color:#1d5a40}
 .issues li.info{background:#e1e8f3;color:#1f3a5f}
 .court{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
-.field{position:relative;background:#f3e3cf;border:2px solid #c9a77c;border-radius:6px;padding:8px 6px 6px;margin-top:6px}
-.field .net{height:4px;background:#1c2333;border-radius:2px;margin:-4px -2px 8px;position:relative}
+.field{position:relative;background:var(--field-bg);border:2px solid var(--field-border);border-radius:6px;padding:8px 6px 6px;margin-top:6px}
+.field .net{height:4px;background:var(--text);border-radius:2px;margin:-4px -2px 8px;position:relative;opacity:.8}
 .field .net::after{content:'NET';position:absolute;right:4px;top:-15px;font-size:10px;letter-spacing:.1em;color:var(--muted);font-weight:600}
 .frow{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.frow+.frow{margin-top:5px;padding-top:5px;border-top:1px dashed #c9a77c}
-.slot{background:#fff;border-radius:6px;padding:4px 5px;border:1px solid #e3d3bd;min-width:0}
+.frow+.frow{margin-top:5px;padding-top:5px;border-top:1px dashed var(--field-border)}
+.slot{background:var(--slot-bg);border-radius:6px;padding:4px 5px;border:1px solid var(--border);min-width:0}
 .slot .lab{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px}
 .slot select{margin:0;padding:3px 2px;font-size:12px;width:100%;border-radius:5px}
 .slot.err{border-color:#b3261e;background:#fdf0ef}
@@ -149,7 +165,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
 
 /* Låseskærm Overlay */
 #lockScreen{position:fixed;inset:0;background:var(--navy);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
-.lock-card{background:#fff;border-radius:12px;padding:24px;width:100%;max-width:360px;box-shadow:0 10px 25px rgba(0,0,0,.2);text-align:center}
+.lock-card{background:var(--surface);color:var(--text);border-radius:12px;padding:24px;width:100%;max-width:360px;box-shadow:0 10px 25px rgba(0,0,0,.3);text-align:center;border:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -171,14 +187,22 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
 <header class="top">
   <div class="wrap">
     <div class="brand">
-      <svg width="38" height="38" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="#e8743b"/><path d="M16 2c4 6 4 22 0 28M3 11c8 2 18 2 26 0M4 22c8-3 16-3 24 0" stroke="#fff" stroke-width="2" fill="none"/></svg>
-      <div><h1>Spilletid</h1><p>Fair spilletid efter positioner og volleyballens regler</p></div>
+      <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="#e8743b"/><path d="M16 2c4 6 4 22 0 28M3 11c8 2 18 2 26 0M4 22c8-3 16-3 24 0" stroke="#fff" stroke-width="2" fill="none"/></svg>
+      <div><h1>Spilletid</h1><p>Volleyball spilletidsstyring</p></div>
     </div>
-    <nav class="tabs" role="tablist">
+    
+    <!-- HOVEDNAVIGATION -->
+    <nav class="tabs" role="tablist" aria-label="Sidenavigation">
       <button role="tab" aria-selected="true" data-tab="kamp">Kampplan</button>
       <button role="tab" aria-selected="false" data-tab="saeson">Sæson</button>
       <button role="tab" aria-selected="false" data-tab="regler">Regler</button>
     </nav>
+
+    <div class="nav-actions">
+      <button class="theme-btn" id="themeToggle" title="Skift lys/mørk tilstand">
+        <span id="themeIcon">🌙</span> <span id="themeText">Mørk</span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -281,7 +305,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
         <p class="sub">Gem og del data i skyen, så alle trænere ser de samme oplysninger uden at downloade filer.</p>
         <div class="stack">
           <label class="f">Google Cloud Client ID
-            <input type="text" id="gdriveClientId" placeholder="Indtast Google Client ID for din app">
+            <input type="text" id="gdriveClientId" placeholder="Indtast Google Client ID">
             <span class="h">Opret et gratis Web Client ID i Google Cloud Console med Drive scope.</span>
           </label>
           <div class="actions">
@@ -343,7 +367,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
   </section>
 </main>
 
-<footer>Spilletid · Data gemmes automatisk i din browser og/eller Google Drive</footer>
+<footer>Spilletid · Data gemmes automatisk i browseren og/eller Google Drive</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -366,10 +390,11 @@ let state = load();
 function load(){
   let s = null;
   try { s = JSON.parse(localStorage.getItem(KEY)); } catch(e){}
-  if (!s || !s.players) s = { players: [], matches: [], settings: {}, plan:null, pin:'1234', pinEnabled:true, gdriveClientId:'' };
+  if (!s || !s.players) s = { players: [], matches: [], settings: {}, plan:null, pin:'1234', pinEnabled:true, gdriveClientId:'', theme:'light' };
   s.settings = Object.assign({}, DEFAULTS, s.settings||{});
   if (s.pin === undefined) s.pin = '1234';
   if (s.pinEnabled === undefined) s.pinEnabled = true;
+  if (!s.theme) s.theme = 'light';
   s.players.forEach(p => {
     if (!p.pos) p.pos = p.role==='haever' ? 'H' : 'U';
     if (!Array.isArray(p.alt)) p.alt = [];
@@ -378,9 +403,7 @@ function load(){
 }
 
 function save(){ 
-  try { 
-    localStorage.setItem(KEY, JSON.stringify(state)); 
-  } catch(e){} 
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} 
 }
 
 function toast(msg){ 
@@ -388,7 +411,26 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); 
 }
 
-/* ---------- Kodebeskyttelse / Låseskærm ---------- */
+/* ---------- Tema / Dark Mode ---------- */
+function applyTheme(){
+  if (state.theme === 'dark') {
+    document.body.classList.add('dark');
+    $('#themeIcon').textContent = '☀️';
+    $('#themeText').textContent = 'Lys';
+  } else {
+    document.body.classList.remove('dark');
+    $('#themeIcon').textContent = '🌙';
+    $('#themeText').textContent = 'Mørk';
+  }
+}
+
+$('#themeToggle').addEventListener('click', () => {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  save();
+  applyTheme();
+});
+
+/* ---------- Lock Screen ---------- */
 function checkLock(){
   const lockEl = $('#lockScreen');
   if (state.pinEnabled && !sessionStorage.getItem('spilletid_unlocked')){
@@ -470,10 +512,7 @@ $('#gdriveSaveBtn').addEventListener('click', async () => {
   try {
     const fileContent = JSON.stringify(state, null, 2);
     const file = new Blob([fileContent], { type: 'application/json' });
-    const metadata = {
-      name: 'spilletid-data.json',
-      mimeType: 'application/json',
-    };
+    const metadata = { name: 'spilletid-data.json', mimeType: 'application/json' };
     const form = new FormData();
     form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
     form.append('file', file);
@@ -483,11 +522,8 @@ $('#gdriveSaveBtn').addEventListener('click', async () => {
       headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
       body: form
     });
-    if (res.ok) {
-      toast('Gemt på Google Drive!');
-    } else {
-      alert('Fejl ved gemning på Google Drive');
-    }
+    if (res.ok) toast('Gemt på Google Drive!');
+    else alert('Fejl ved gemning på Google Drive');
   } catch (err) {
     alert('Kunne ikke gemme på Google Drive: ' + err.message);
   }
@@ -509,6 +545,7 @@ $('#gdriveLoadBtn').addEventListener('click', async () => {
       if (data.players && data.matches) {
         state = data;
         save();
+        applyTheme();
         applySettings();
         renderRoster();
         renderPlan();
@@ -516,7 +553,7 @@ $('#gdriveLoadBtn').addEventListener('click', async () => {
         toast('Data hentet fra Google Drive!');
       }
     } else {
-      alert('Ingen gemt "spilletid-data.json" fundet på dit Google Drive.');
+      alert('Ingen gemt "spilletid-data.json" fundet på Google Drive.');
     }
   } catch (err) {
     alert('Fejl ved hentning fra Google Drive: ' + err.message);
@@ -528,7 +565,7 @@ const byId = id => state.players.find(p=>p.id===id);
 const nameOf = id => { const p=byId(id); if(p) return p.name; for (const m of state.matches) if (m.names && m.names[id]) return m.names[id]; return '(slettet)'; };
 const pb = (code, extra='') => `<span class="pb ${code} ${extra}" title="${POS[code]||'Plads'}">${code==='A'?'•':code}</span>`;
 
-/* ---------- Tabs ---------- */
+/* ---------- Tabs Navigation ---------- */
 document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('nav.tabs button').forEach(x => x.setAttribute('aria-selected', x===b));
   ['kamp','saeson','regler'].forEach(t => $('#tab-'+t).classList.toggle('hidden', b.dataset.tab!==t));
@@ -623,7 +660,7 @@ function syncSettingsUI(){
 }
 settingIds.forEach(s => $(s).addEventListener('change', () => { readSettings(); renderPosOverview(); }));
 
-/* ---------- Logic / Plan Execution ---------- */
+/* ---------- Logic & Generering ---------- */
 function slotsFor(s){ return s.formation==='fri' ? Array(s.court).fill('A') : FORM[s.formation].slice(); }
 function eligible(p, code){ return code==='A' || p.pos===code || p.pos==='U' || p.alt.includes(code); }
 function isPrimary(p, code){ return code==='A' || p.pos===code || p.pos==='U'; }
@@ -679,10 +716,6 @@ function renderPosOverview(){
     else status = prim>0 ? `≈${Math.min(100,Math.round(100*places/prim))}% tid` : '';
     return `<tr><td>${pb(c)} ${POS[c]}</td><td>${places}</td><td>${prim}${alt?` <span style="color:var(--muted)">+${alt}</span>`:''}</td><td>${status}</td></tr>`;
   });
-  if (ctx.libMode){
-    const n = ctx.libs.length;
-    rows.push(`<tr><td>${pb('L')} Libero</td><td>1</td><td>${n}</td><td>${n? `≈${Math.round(100/n)}% tid` : '<span style="color:var(--muted)">Ingen</span>'}</td></tr>`);
-  }
   box.innerHTML = `<table class="posov"><thead><tr><th>Position</th><th>Pladser</th><th>Spillere</th><th>Status</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
 }
 
@@ -767,15 +800,6 @@ function makePlan(){
            squad: ctx.squad.map(p=>p.id), libs: ctx.libs.map(p=>p.id), extraLibs: ctx.extraLibs.map(p=>p.id), segs: best };
 }
 
-function validate(plan){
-  const errs = [], warns = [], infos = [];
-  return { errs:[...new Set(errs)], warns:[...new Set(warns)], infos };
-}
-
-function segLabel(k, segs){
-  const set = Math.floor(k/segs)+1, part = k%segs;
-  return segs===1 ? `Sæt ${set}` : `Sæt ${set}${['a','b','c'][part]}`;
-}
 function shortLabel(k, segs){
   const set = Math.floor(k/segs)+1, part = k%segs;
   return segs===1 ? `Sæt ${set}` : `S${set}${['a','b','c'][part]}`;
@@ -787,7 +811,7 @@ function renderPlan(err){
   if (err){ body.innerHTML = `<ul class="issues"><li class="err">${esc(err)}</li></ul>`; $('#saveBtn').disabled=true; return; }
   if (!plan){ body.innerHTML = `<div class="empty"><strong>Ingen plan endnu</strong>Tilføj spillere, giv dem en position, og tryk “Lav fair plan”.</div>`; $('#saveBtn').disabled=true; return; }
   $('#saveBtn').disabled=false;
-  const N = plan.segs.length, G = plan.segments;
+  const G = plan.segments;
   const counts = {}; plan.squad.forEach(id=>counts[id]=0);
   plan.segs.forEach(sg => { sg.ids.forEach(id=>{ if(id && counts[id]!==undefined) counts[id]++; }); if (sg.lib) counts[sg.lib]++; });
 
@@ -807,13 +831,31 @@ function renderPlan(err){
   body.innerHTML = html;
 }
 
+function slotSelect(plan, sg, k, i){
+  const code = plan.slots[i], cur = sg.ids[i];
+  const regs = plan.squad.filter(id=>!plan.libs.includes(id)).map(byId).filter(Boolean);
+  const fit = regs.filter(p=>eligible(p,code)), other = regs.filter(p=>!eligible(p,code));
+  const opt = (p) => `<option value="${p.id}" ${p.id===cur?'selected':''}>${esc(p.name)}</option>`;
+  return `<select data-k="${k}" data-i="${i}">
+    <option value="">– tom –</option>
+    ${code==='A' ? fit.map(opt).join('') : `<optgroup label="${POS[code]}">${fit.map(opt).join('')}</optgroup>${other.length?`<optgroup label="Andre">${other.map(opt).join('')}</optgroup>`:''}`}
+  </select>`;
+}
+
 function renderCourt(plan, sg, k){
   const cell = i => {
-    const id = sg.ids[i], code = plan.slots[i];
-    return `<div class="slot"><div class="lab"><span>${i+1}</span>${pb(code)}</div><div style="padding:4px;font-weight:600;font-size:12px">${esc(nameOf(id))}</div></div>`;
+    const code = plan.slots[i];
+    return `<div class="slot"><div class="lab"><span>${i+1}</span>${pb(code)}</div>${slotSelect(plan,sg,k,i)}</div>`;
   };
   return `<div class="setbox"><h3>Sæt ${sg.set+1}</h3><div class="field"><div class="net"></div><div class="freegrid">${sg.ids.map((_,i)=>cell(i)).join('')}</div></div></div>`;
 }
+
+$('#planBody').addEventListener('change', e => {
+  const sel = e.target.closest('select[data-k]'); if (!sel || !state.plan) return;
+  const plan = state.plan, k = +sel.dataset.k, sg = plan.segs[k], val = sel.value || null;
+  const i = +sel.dataset.i; sg.ids[i] = val;
+  save(); renderPlan();
+});
 
 $('#genBtn').addEventListener('click', () => {
   const r = makePlan();
@@ -859,16 +901,16 @@ $('#importFile').addEventListener('change', async e => {
     const d=JSON.parse(await f.text()); 
     if(!d.players||!d.matches) throw 0; 
     localStorage.setItem(KEY, JSON.stringify(d)); 
-    state=load(); save(); applySettings(); renderRoster(); renderPlan(); renderSeason(); toast('Data importeret'); 
+    state=load(); save(); applyTheme(); applySettings(); renderRoster(); renderPlan(); renderSeason(); toast('Data importeret'); 
   } catch(_){ alert('Filen kunne ikke læses.'); }
   e.target.value='';
 });
 $('#resetBtn').addEventListener('click', () => { 
   if(!confirm('Slet alle spillere og hele sæsonen?')) return; 
-  localStorage.removeItem(KEY); state=load(); applySettings(); renderRoster(); renderPlan(); renderSeason(); 
+  localStorage.removeItem(KEY); state=load(); applyTheme(); applySettings(); renderRoster(); renderPlan(); renderSeason(); 
 });
 
-checkLock(); applySettings(); renderRoster(); renderPlan();
+applyTheme(); checkLock(); applySettings(); renderRoster(); renderPlan();
 })();
 </script>
 </body>
