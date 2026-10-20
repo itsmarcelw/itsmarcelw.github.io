@@ -41,7 +41,7 @@
     .video-liste { list-style: none; padding: 0; margin: 0 0 40px; display: flex; flex-direction: column; gap: 14px; }
     .video-card {
       background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-      overflow: hidden; text-decoration: none; color: inherit; display: flex; gap: 16px;
+      overflow: hidden; color: inherit; display: flex; gap: 16px; cursor: pointer;
       transition: border-color .15s, transform .15s;
     }
     .video-card:hover { border-color: var(--accent); transform: translateY(-2px); }
@@ -52,13 +52,51 @@
       position: relative; overflow: hidden;
     }
     .video-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .play-icon {
+      position: absolute; width: 36px; height: 36px; background: rgba(0,0,0,0.65);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 14px; padding-left: 2px;
+    }
     
     .video-info { padding: 12px 16px 12px 0; display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
     .video-titel { font-weight: 600; font-size: 16px; margin: 0 0 4px; line-height: 1.3; }
     .video-dato { color: var(--muted); font-size: 13px; margin: 0 0 6px; }
-    .video-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--accentbg); color: var(--accent); text-transform: uppercase; width: fit-content; }
+    .video-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--accentbg); color: var(--accent); width: fit-content; text-transform: uppercase; }
 
     .loading-text { color: var(--muted); font-style: italic; }
+
+    /* MODAL VIDEO AFSPILER */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85); display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 16px; backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+      width: 100%; max-width: 850px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      position: relative; animation: modalIn 0.2s ease-out;
+    }
+    @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    
+    .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 12px; }
+    .modal-title { font-size: 18px; margin: 0; line-height: 1.25; }
+    .modal-close {
+      background: var(--accentbg); color: var(--accent); border: none; border-radius: 50%;
+      width: 32px; height: 32px; font-size: 20px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;
+    }
+    .modal-close:hover { opacity: 0.8; }
+    
+    .player-container {
+      position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+      border-radius: 10px; background: #000; margin-bottom: 12px;
+    }
+    .player-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    
+    .modal-footer { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+    .ext-link { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .ext-link:hover { text-decoration: underline; }
 
     /* Trænersektion */
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; margin-top: 32px; }
@@ -100,7 +138,7 @@
     
     <header>
       <h1>Kampvideoer</h1>
-      <p class="sub">Her kan du finde optagelser af vores kampe og træningskampe.</p>
+      <p class="sub">Her kan du finde og se optagelser af vores kampe direkte på siden.</p>
     </header>
 
     <main>
@@ -162,14 +200,26 @@
     </main>
   </div>
 
-  <script>
-    // -------------------------------------------------------------
-    // 1. INDSÆT DIN WEBAPP-URL FRA GOOGLE APPS SCRIPT HER:
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz456XrAofoqV0uBnYEWzldXj91MSaOpeqxN8g3prFH-slS6lk73Q9s7pMjjXTAKg5V/exec";
+  <!-- MODAL POPUP VIDEO AFSPILER -->
+  <div class="modal-overlay" id="video-modal" onclick="lukModalPaaBaggrund(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-titel">Kampvideo</h3>
+        <button class="modal-close" onclick="lukModal()">✕</button>
+      </div>
+      <div class="player-container">
+        <iframe id="modal-iframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="modal-footer">
+        <span id="modal-dato"></span>
+        <a id="modal-ext-link" href="#" target="_blank" class="ext-link">Åbn eksternt link ↗</a>
+      </div>
+    </div>
+  </div>
 
-    // 2. TRÆNERKODE:
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz456XrAofoqV0uBnYEWzldXj91MSaOpeqxN8g3prFH-slS6lk73Q9s7pMjjXTAKg5V/exec";
     const TRÆNER_KODE = "1234";
-    // -------------------------------------------------------------
 
     let alleVideoer = [];
     let valgtKategori = "Kampe 26/27";
@@ -181,11 +231,32 @@
       return (match && match[2].length === 11) ? `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg` : null;
     }
 
+    // Genererer et indlejringssurface (embed URL) til afspilleren
+    function hentEmbedUrl(url) {
+      if (!url) return null;
+      
+      // YouTube
+      const ytMatch = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+      if (ytMatch && ytMatch[2].length === 11) {
+        return `https://www.youtube-nocookie.com/embed/${ytMatch[2]}?autoplay=1`;
+      }
+      
+      // Google Drive
+      const gdMatch = url.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/);
+      if (gdMatch && gdMatch[1]) {
+        return `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
+      }
+      
+      // Direkte link hvis det allerede er et embed link
+      if (url.includes("/embed/")) return url;
+      
+      return url;
+    }
+
     async function hentVideoer() {
       const container = document.getElementById("video-liste");
       try {
-        // Tvinger browseren til altid at hente helt nye data uden at bruge sin hukommelse
-        const response = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), { cache: "no-store" });
+        const response = await fetch(APPS_SCRIPT_URL + "?v=" + Date.now(), { cache: "no-store" });
         alleVideoer = await response.json();
         visVideoer();
       } catch (err) {
@@ -207,7 +278,7 @@
       const filtrerede = valgtKategori === "Alle" 
         ? alleVideoer 
         : alleVideoer.filter(v => {
-            const kat = (v.kategori && v.kategori !== "Kamp") ? v.kategori.trim() : "Kampe 26/27";
+            const kat = (v.kategori && String(v.kategori).trim() !== "") ? String(v.kategori).trim() : "Kampe 26/27";
             return kat.toLowerCase() === valgtKategori.trim().toLowerCase();
           });
 
@@ -218,28 +289,55 @@
 
       [...filtrerede].reverse().forEach(v => {
         const thumbUrl = hentYouTubeThumbnail(v.link);
-        const a = document.createElement("a");
-        a.href = v.link;
-        a.target = "_blank";
-        a.className = "video-card";
+        const div = document.createElement("div");
+        div.className = "video-card";
+        div.onclick = () => aabnModal(v);
         
         const thumbHTML = thumbUrl 
-          ? `<div class="video-thumb"><img src="${thumbUrl}" alt="Thumbnail" loading="lazy"></div>`
-          : `<div class="video-thumb">🎥</div>`;
+          ? `<div class="video-thumb"><img src="${thumbUrl}" alt="Thumbnail" loading="lazy"><div class="play-icon">▶</div></div>`
+          : `<div class="video-thumb">🎥<div class="play-icon">▶</div></div>`;
 
-        const visKategori = (v.kategori && v.kategori !== "Kamp") ? v.kategori : "Kampe 26/27";
+        const katNavn = (v.kategori && String(v.kategori).trim() !== "") ? String(v.kategori).trim() : "Kampe 26/27";
 
-        a.innerHTML = `
+        div.innerHTML = `
           ${thumbHTML}
           <div class="video-info">
-            <span class="video-tag">${visKategori}</span>
+            <span class="video-tag">${katNavn}</span>
             <p class="video-titel">${v.titel}</p>
             <p class="video-dato">${v.dato}</p>
           </div>
         `;
-        container.appendChild(a);
+        container.appendChild(div);
       });
     }
+
+    // Modal Video Afspiller Funktioner
+    function aabnModal(video) {
+      const embedUrl = hentEmbedUrl(video.link);
+      document.getElementById("modal-titel").textContent = video.titel;
+      document.getElementById("modal-dato").textContent = video.dato;
+      document.getElementById("modal-ext-link").href = video.link;
+      document.getElementById("modal-iframe").src = embedUrl;
+      document.getElementById("video-modal").classList.add("open");
+      document.body.style.overflow = "hidden"; // Forhindrer baggrundsscroll
+    }
+
+    function lukModal() {
+      document.getElementById("video-modal").classList.remove("open");
+      document.getElementById("modal-iframe").src = ""; // Stopper lyden/videoen
+      document.body.style.overflow = "";
+    }
+
+    function lukModalPaaBaggrund(e) {
+      if (e.target.id === "video-modal") {
+        lukModal();
+      }
+    }
+
+    // Luk modal med ESC-tasten
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") lukModal();
+    });
 
     async function tilfoejVideo(e) {
       e.preventDefault();
