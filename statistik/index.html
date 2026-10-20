@@ -133,7 +133,7 @@
         <h2>2. Rediger Kamp- & Holdinfo</h2>
         <p class="sub">Tilpas navne inden synkronisering med Google Regneark.</p>
         <label class="f">Vores Holdnavn
-          <input type="text" id="homeTeamInput" value="Aalborg Volleyball">
+          <input type="text" id="homeTeamInput" value="Aalborg Volleyball 4">
         </label>
         <label class="f">Modstanders Holdnavn
           <input type="text" id="awayTeamInput" value="Modstander">
@@ -271,7 +271,7 @@
       }
     });
 
-    // Opdater automatisk modstanderens navn og fanenavn
+    // Opdater modstanderens navn og fanenavn automatisk ved indlæsning
     if (scoreOverview.length > 0 && scoreOverview[0].opp) {
       const oppName = scoreOverview[0].opp;
       if (awayTeamInput) awayTeamInput.value = oppName;
@@ -323,8 +323,7 @@
 
     if (sendBtn) sendBtn.disabled = false;
 
-    // Holdnavne fra felterne
-    const homeName = homeTeamInput ? homeTeamInput.value.trim() || 'Aalborg Volleyball' : 'Aalborg Volleyball';
+    const homeName = homeTeamInput ? homeTeamInput.value.trim() || 'Aalborg Volleyball 4' : 'Aalborg Volleyball 4';
     const awayName = awayTeamInput ? awayTeamInput.value.trim() || 'Modstander' : 'Modstander';
 
     // Samlet resultat
@@ -536,7 +535,7 @@
     }
 
     try {
-      const homeName = homeTeamInput ? homeTeamInput.value.trim() || 'Aalborg Volleyball' : 'Aalborg Volleyball';
+      const homeName = homeTeamInput ? homeTeamInput.value.trim() || 'Aalborg Volleyball 4' : 'Aalborg Volleyball 4';
       const awayName = awayTeamInput ? awayTeamInput.value.trim() || 'Modstander' : 'Modstander';
       const tabName = sheetTabNameInput ? sheetTabNameInput.value.trim() || 'Kamp' : 'Kamp';
 
@@ -546,7 +545,7 @@
         else if (parseInt(s.ourScore) < parseInt(s.oppScore)) totalSetsLost++;
       });
 
-      // Opbyg alle tabeller (Total + Enkelte sæt) med trøjenumre
+      // Opbyg alle tabeller (Total + Enkelte sæt) med samtlige spilleres tal
       const exportTables = currentStatData.sections.map(sec => {
         const tableHeader = ["#", "Spiller", "Spillet", "+/-", "Kills", "Fejl", "Swings", "Hit Pct", "Blocks", "Assist", "Digs", "Rec", "Serves", "Aces", "Srv Err"];
         const rows = [tableHeader];
@@ -557,9 +556,21 @@
           const jNum = isTotalRow ? '' : (jerseyNumbers[pName] || '');
 
           rows.push([
-            jNum, pName, r[1]||'0', r[2]||'0', r[6]||'0', r[7]||'0', 
-            r[5]||'0', r[8]||'0.000', r[9]||'0', r[12]||'0', r[13]||'0', 
-            r[15]||'0', r[17]||'0', r[18]||'0', r[19]||'0'
+            jNum,
+            pName,
+            r[1] || '0',  // Spillet
+            r[2] || '0',  // +/-
+            r[6] || '0',  // Kills
+            r[7] || '0',  // Fejl
+            r[5] || '0',  // Swings
+            r[8] || '0,000', // Hit Pct
+            r[9] || '0',  // Blocks
+            r[12] || '0', // Assist
+            r[13] || '0', // Digs
+            r[15] || '0', // Rec
+            r[17] || '0', // Serves
+            r[18] || '0', // Aces
+            r[19] || '0'  // Srv Err
           ]);
         });
 
@@ -571,7 +582,7 @@
 
       // Total sektion nøgletal
       const totalSec = currentStatData.sections[currentStatData.sections.length - 1];
-      const totalRow = totalSec.rows[totalSec.rows.length - 1] || [];
+      const totalRow = totalSec ? (totalSec.rows[totalSec.rows.length - 1] || []) : [];
 
       const payload = {
         sheetName: tabName,
@@ -592,7 +603,7 @@
       await fetch(url, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
       });
 
