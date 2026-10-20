@@ -4,131 +4,210 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Spilletid · Trænerhjørnet</title>
+  <title>Kampvideoer · Holdets Værktøjer</title>
   <style>
     :root {
       --bg: #f6f7f9; --card: #fff; --ink: #16181d; --muted: #6b7280; --line: #e3e6eb;
-      --accent: #1b4f9c; --accentbg: #eaf0fa; --bad: #a11d1d; --badbg: #fbeaea;
+      --accent: #1b4f9c; --accentbg: #eaf0fa; --ok: #0f7b4f; --okbg: #e7f5ee; --bad: #a11d1d; --badbg: #fbeaea;
       color-scheme: light dark;
     }
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #101216; --card: #181b21; --ink: #e8eaed; --muted: #9aa1ac; --line: #2a2f38;
-        --accent: #7fa8ec; --accentbg: #1c2a44; --bad: #f08a8a; --badbg: #2b1616;
+        --accent: #7fa8ec; --accentbg: #1c2a44; --ok: #5fd39b; --okbg: #12291f; --bad: #f08a8a; --badbg: #2b1616;
       }
     }
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     .wrap { max-width: 800px; margin: 0 auto; padding: 40px 16px 64px; }
     
-    /* Tilbage-knap */
     .back-link { display: inline-block; margin-bottom: 24px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 14px; }
     .back-link:hover { text-decoration: underline; }
     
     h1 { font-size: 30px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -.02em; }
     .sub { color: var(--muted); font-size: 15px; margin: 0 0 28px; max-width: 60ch; }
     
-    /* Låseskærm design */
-    .lock-card {
-      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-      padding: 32px 24px; text-align: center; max-width: 400px; margin: 40px auto;
-    }
-    .lock-card h2 { margin: 0 0 8px; font-size: 22px; }
-    .lock-card p { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
-    .lock-form { display: flex; gap: 8px; justify-content: center; }
-    .lock-input {
-      padding: 10px 14px; font-size: 16px; border: 1px solid var(--line);
-      border-radius: 8px; background: var(--bg); color: var(--ink); width: 130px; text-align: center;
-    }
-    .lock-btn {
-      padding: 10px 18px; font-size: 14px; font-weight: 600; background: var(--accent);
-      color: #fff; border: none; border-radius: 8px; cursor: pointer;
-    }
-    .lock-btn:hover { opacity: 0.9; }
-    .error-msg { color: var(--bad); font-size: 13px; margin-top: 12px; font-weight: 600; display: none; }
+    /* Liste med videoer */
+    .video-liste { list-style: none; padding: 0; margin: 0 0 40px; display: flex; flex-direction: column; gap: 12px; }
+    .video-item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: inherit; transition: border-color .15s; }
+    .video-item:hover { border-color: var(--accent); }
+    .video-titel { font-weight: 600; font-size: 16px; margin: 0; }
+    .video-dato { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .video-link-tekst { color: var(--accent); font-weight: 600; font-size: 14px; white-space: nowrap; }
 
-    /* Skjult indhold (vises først ved korrekt kode) */
+    .loading-text { color: var(--muted); font-style: italic; }
+
+    /* Trænersektion & Formulardesign */
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; margin-top: 32px; }
+    .card h2 { margin-top: 0; font-size: 20px; }
+    
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; text-transform: uppercase; color: var(--muted); }
+    input[type="text"], input[type="url"] {
+      width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid var(--line);
+      border-radius: 8px; background: var(--bg); color: var(--ink);
+    }
+    .btn {
+      padding: 10px 18px; font-size: 14px; font-weight: 600; background: var(--accent);
+      color: #fff; border: none; border-radius: 8px; cursor: pointer; display: inline-block;
+    }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn:hover:not(:disabled) { opacity: 0.9; }
+
+    .lock-card { text-align: center; }
+    .lock-form { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+    .lock-input { width: 130px !important; text-align: center; }
+    
     #traener-indhold { display: none; }
-    
-    /* Tabel over spilletid */
-    table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid var(--line); margin-top: 16px; }
-    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); }
-    th { background: var(--accentbg); color: var(--accent); font-weight: 600; font-size: 13px; text-transform: uppercase; }
-    tr:last-child td { border-bottom: none; }
-    
-    .relock-btn { margin-top: 24px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; text-decoration: underline; padding: 0; }
+    .error-msg { color: var(--bad); font-size: 13px; margin-top: 8px; display: none; font-weight: 600; }
+    .status-box { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; display: none; }
+    .status-box.success { background: var(--okbg); color: var(--ok); }
+    .status-box.error { background: var(--badbg); color: var(--bad); }
   </style>
 </head>
 <body>
   <div class="wrap">
     <a href="../" class="back-link">← Tilbage til forsiden</a>
     
-    <!-- LÅSESKÆRM -->
-    <div id="laas-boks" class="lock-card">
-      <h2>🔒 Træneradgang</h2>
-      <p>Indtast trænerkoden for at se spilletidsfordelingen.</p>
-      <form class="lock-form" onsubmit="tjekKode(event)">
-        <input type="password" id="kode-input" class="lock-input" placeholder="Kode" autofocus autocomplete="off">
-        <button type="submit" class="lock-btn">Lås op</button>
-      </form>
-      <div id="fejl-tekst" class="error-msg">Forkert kode, prøv igen.</div>
-    </div>
+    <header>
+      <h1>Kampvideoer</h1>
+      <p class="sub">Her kan du finde optagelser af vores kampe fra sæsonen.</p>
+    </header>
 
-    <!-- INDHOLD (SKJULT INDTIL KODE INDTASTES) -->
-    <div id="traener-indhold">
-      <header>
-        <h1>Spilletidsfordeling</h1>
-        <p class="sub">Oversigt over minutter og sæt spillet pr. spiller i denne sæson.</p>
-      </header>
+    <main>
+      <!-- LISTE OVER VIDEOER -->
+      <ul class="video-liste" id="video-liste">
+        <li class="loading-text" id="loading-msg">Henter kampvideoer...</li>
+      </ul>
 
-      <main>
-        <table>
-          <thead>
-            <tr>
-              <th>Spiller</th>
-              <th>Position</th>
-              <th>Kampe</th>
-              <th>Spilletid</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Spiller 1</strong></td>
-              <td>Angreb</td>
-              <td>5</td>
-              <td>15 sæt (80%)</td>
-            </tr>
-            <tr>
-              <td><strong>Spiller 2</strong></td>
-              <td>Forsvar</td>
-              <td>5</td>
-              <td>12 sæt (65%)</td>
-            </tr>
-            <tr>
-              <td><strong>Spiller 3</strong></td>
-              <td>Midte</td>
-              <td>4</td>
-              <td>10 sæt (55%)</td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- TRÆNERADGANG / LÅSESKÆRM -->
+      <section class="card lock-card" id="laas-boks">
+        <h2>🔒 Træneradgang</h2>
+        <p style="color: var(--muted); font-size: 14px;">Lås op for at tilføje nye kampvideoer til listen.</p>
+        <form class="lock-form" onsubmit="tjekKode(event)">
+          <input type="password" id="kode-input" class="lock-input" placeholder="Kode" autocomplete="off">
+          <button type="submit" class="btn">Lås op</button>
+        </form>
+        <div id="fejl-tekst" class="error-msg">Forkert kode.</div>
+      </section>
 
-        <button class="relock-btn" onclick="laasIgen()">Lås siden igen</button>
-      </main>
-    </div>
+      <!-- FORMULAR TIL AT TILFØJE VIDEOER (LÅST INDTIL KODE INDTASTES) -->
+      <section class="card" id="traener-indhold">
+        <h2>📹 Tilføj ny kampvideo</h2>
+        <form onsubmit="tilfoejVideo(event)">
+          <div class="form-group">
+            <label for="titel">Kamp / Titel</label>
+            <input type="text" id="titel" placeholder="f.eks. Hjemmekamp mod Randers" required>
+          </div>
+          <div class="form-group">
+            <label for="dato">Dato / Info</label>
+            <input type="text" id="dato" placeholder="f.eks. Spillet: 15. oktober 2026" required>
+          </div>
+          <div class="form-group">
+            <label for="link">Video Link (YouTube, Google Drive, VEO osv.)</label>
+            <input type="url" id="link" placeholder="https://..." required>
+          </div>
+          <button type="submit" id="submit-btn" class="btn">Tilføj Video</button>
+        </form>
+
+        <div id="status-msg" class="status-box"></div>
+      </section>
+    </main>
   </div>
 
   <script>
     // -------------------------------------------------------------
-    // SÆT DIN EGEN TRÆNERKODE HER:
-    const TRÆNER_KODE = "1234";
+    // 1. INDSÆT DIN WEBAPP-URL FRA GOOGLE APPS SCRIPT HER:
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz456XrAofoqV0uBnYEWzldXj91MSaOpeqxN8g3prFH-slS6lk73Q9s7pMjjXTAKg5V/exec";
+
+    // 2. TRÆNERKODE:
+    const TRÆNER_KODE = "8296";
     // -------------------------------------------------------------
 
+    // Hent og vis videoer fra Google Sheet ved indlæsning
+    async function hentVideoer() {
+      const container = document.getElementById("video-liste");
+      try {
+        const response = await fetch(APPS_SCRIPT_URL);
+        const videoer = await response.json();
+        
+        container.innerHTML = "";
+
+        if (!videoer || videoer.length === 0) {
+          container.innerHTML = '<li class="loading-text">Ingen kampvideoer tilføjet endnu.</li>';
+          return;
+        }
+
+        // Vis nyeste videoer øverst
+        videoer.reverse().forEach(v => {
+          const a = document.createElement("a");
+          a.href = v.link;
+          a.target = "_blank";
+          a.className = "video-item";
+          a.innerHTML = `
+            <div>
+              <p class="video-titel">${v.titel}</p>
+              <p class="video-dato">${v.dato}</p>
+            </div>
+            <span class="video-link-tekst">Se video →</span>
+          `;
+          container.appendChild(a);
+        });
+
+      } catch (err) {
+        container.innerHTML = '<li class="loading-text" style="color: var(--bad);">Der opstod en fejl ved indlæsning af videoer.</li>';
+      }
+    }
+
+    // Gem ny video i Google Sheet
+    async function tilfoejVideo(e) {
+      e.preventDefault();
+      const btn = document.getElementById("submit-btn");
+      const statusMsg = document.getElementById("status-msg");
+      
+      btn.disabled = true;
+      btn.textContent = "Gemmer video...";
+      statusMsg.style.display = "none";
+
+      const nyVideo = {
+        titel: document.getElementById("titel").value,
+        dato: document.getElementById("dato").value,
+        link: document.getElementById("link").value
+      };
+
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(nyVideo)
+        });
+        
+        const res = await response.json();
+        if (res.status === "success") {
+          statusMsg.className = "status-box success";
+          statusMsg.textContent = "✓ Videoen er gemt og tilføjet til siden!";
+          statusMsg.style.display = "block";
+          e.target.reset();
+          hentVideoer(); // Opdater listen på siden med det samme
+        } else {
+          throw new Error(res.message);
+        }
+      } catch (err) {
+        statusMsg.className = "status-box error";
+        statusMsg.textContent = "❌ Der opstod en fejl. Tjek linket og prøv igen.";
+        statusMsg.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Tilføj Video";
+      }
+    }
+
+    // Kodelås funktioner
     function tjekKode(e) {
-      if (e) e.preventDefault();
+      e.preventDefault();
       const input = document.getElementById("kode-input").value;
       if (input === TRÆNER_KODE) {
-        sessionStorage.setItem("træner_godkendt", "true");
+        sessionStorage.setItem("video_traener_godkendt", "true");
         visIndhold();
       } else {
         document.getElementById("fejl-tekst").style.display = "block";
@@ -140,15 +219,12 @@
       document.getElementById("traener-indhold").style.display = "block";
     }
 
-    function laasIgen() {
-      sessionStorage.removeItem("træner_godkendt");
-      location.reload();
-    }
-
-    // Hvis man allerede har låst op i denne browser-fane, vises indholdet med det samme
-    if (sessionStorage.getItem("træner_godkendt") === "true") {
+    if (sessionStorage.getItem("video_traener_godkendt") === "true") {
       visIndhold();
     }
+
+    // Start hentning af videoer
+    hentVideoer();
   </script>
 </body>
 </html>
