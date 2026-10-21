@@ -177,7 +177,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
     <h2>Spilletid</h2>
     <p class="sub" style="margin-top:4px">Indtast adgangskode for at åbne</p>
     <form id="lockForm" style="margin-top:16px">
-      <input type="password" id="pinInput" placeholder="Kode (f.eks. 1234)" style="text-align:center;font-size:1.2rem;letter-spacing:2px;" required autofocus>
+      <input type="password" id="pinInput" placeholder="" style="text-align:center;font-size:1.2rem;letter-spacing:2px;" required autofocus>
       <button class="btn primary" type="submit" style="width:100%;margin-top:12px">Lås op</button>
       <div id="lockError" style="color:#b3261e;font-size:var(--text-xs);margin-top:10px;display:none;font-weight:600">Forkert adgangskode</div>
     </form>
@@ -251,9 +251,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
         </div>
         <label class="f" id="maxSubsWrap">Udskiftninger pr. sæt
           <select id="maxSubs">
-            <option value="6">6 (officielle FIVB-regler)</option>
-            <option value="8">8 (FIVB-forsøgsregel 2026)</option>
-            <option value="12">12 (fx ungdom/motion)</option>
+            <option value="8">8</option>
             <option value="99">Ubegrænset</option>
           </select>
         </label>
