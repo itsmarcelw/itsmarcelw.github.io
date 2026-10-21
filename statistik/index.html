@@ -101,7 +101,7 @@
     <h2 style="margin: 0 0 4px;">Træner-Login</h2>
     <p class="sub" style="margin-bottom: 16px;">Indtast kode for adgang til kampstatistik</p>
     <form id="lockForm">
-      <input type="password" id="pinInput" placeholder="Kode (standard: 1234)" style="text-align:center; font-size: 1.1rem; letter-spacing: 2px;" required autofocus>
+      <input type="password" id="pinInput" placeholder="Kode" style="text-align:center; font-size: 1.1rem; letter-spacing: 2px;" required autofocus>
       <button class="btn primary" type="submit" style="margin-top:8px">Lås op</button>
       <div id="lockError" style="color:var(--bad); font-size: 12px; margin-top: 10px; display: none; font-weight: 600;">Forkert adgangskode</div>
     </form>
@@ -185,7 +185,7 @@
   const SCRIPT_URL_KEY = 'volley_drive_script_url';
   const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYFKSq6PJtGsc8IQfBMNoOlHcAFO0aDwgrQqHfpkovaOeeF-BOeqG1IGnpN5NYw9yY/exec';
 
-  let currentPin = '1234';
+  let currentPin = '8296';
   try {
     const savedPin = localStorage.getItem(PIN_KEY);
     if (savedPin) currentPin = savedPin;
@@ -418,7 +418,7 @@
       return;
     }
 
-    const homeName = 'Aalborg Volleyball 4';
+    const homeName = 'Aalborg Volleyball.4';
     const awayName = currentStatData.scoreOverview[0]?.opp || 'Modstander';
 
     // Samlet resultat
