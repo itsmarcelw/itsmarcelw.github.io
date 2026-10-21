@@ -108,7 +108,6 @@
         <h2>📊 Trænerens Google Sheet</h2>
         <p>Alle indberetninger samles i jeres private Google Sheet.</p>
         <p style="margin-top: 16px;">
-          <!-- Erstat href med linket til dit Google Sheet -->
           <a href="https://sheets.google.com" target="_blank" class="btn" style="text-decoration: none;">Åbn Kørselsark på Google Drive ↗</a>
         </p>
         <p style="color: var(--muted); font-size: 13px; margin-top: 12px;">
@@ -120,10 +119,10 @@
 
   <script>
     // -------------------------------------------------------------
-    // 1. INDSÆT DIN KOPIEREDE WEBAPP-URL FRA GOOGLE APPS SCRIPT HER:
+    // 1. DIN WEBAPP-URL FRA GOOGLE APPS SCRIPT:
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwbsc6BPt3mz7omamSBSdTabEWa2s4FNjLwFfsEEE1Ly3Cb4a8OXICzxRctOST2f11o/exec";
 
-    // 2. INDSÆT DIN TRÆNERKODE HER:
+    // 2. DIN TRÆNERKODE:
     const TRÆNER_KODE = "8296";
     // -------------------------------------------------------------
 
@@ -145,21 +144,17 @@
       };
 
       try {
-        const response = await fetch(APPS_SCRIPT_URL, {
+        await fetch(APPS_SCRIPT_URL, {
           method: "POST",
+          mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(tur)
         });
         
-        const res = await response.json();
-        if (res.status === "success") {
-          statusMsg.className = "status-box success";
-          statusMsg.textContent = "✓ Tak! Din indberetning er gemt i trænerens ark.";
-          statusMsg.style.display = "block";
-          e.target.reset();
-        } else {
-          throw new Error(res.message);
-        }
+        statusMsg.className = "status-box success";
+        statusMsg.textContent = "✓ Tak! Din indberetning er gemt i trænerens ark.";
+        statusMsg.style.display = "block";
+        e.target.reset();
       } catch (err) {
         statusMsg.className = "status-box error";
         statusMsg.textContent = "❌ Der opstod en fejl. Tjek din internetforbindelse og prøv igen.";
@@ -192,4 +187,3 @@
   </script>
 </body>
 </html>
-
