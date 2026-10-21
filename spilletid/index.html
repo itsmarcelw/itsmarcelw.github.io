@@ -43,6 +43,10 @@ button,input,select{font:inherit;color:inherit}
 h1,h2,h3{margin:0;line-height:1.2}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
 
+/* Tilbage-link (Streamlined) */
+.back-link { display: inline-block; margin-bottom: 20px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 14px; }
+.back-link:hover { text-decoration: underline; }
+
 /* Toppanel Navigation */
 header.top{position:sticky;top:0;z-index:100;background:var(--navy);color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.15);transition:background .2s}
 header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
@@ -121,7 +125,7 @@ td.n{font-weight:500}
 .toast.show{opacity:1}
 footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20px}
 @media print{
-  header.top nav,.noprint,footer,.theme-btn{display:none!important}
+  header.top nav,.noprint,footer,.theme-btn,.back-link{display:none!important}
   body{background:#fff;color:#000}.grid{grid-template-columns:1fr}.card{box-shadow:none;border:0;padding:0}
   .cell.on{background:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
@@ -207,6 +211,8 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
 </header>
 
 <main class="wrap">
+  <a href="../" class="back-link">← Tilbage til forsiden</a>
+
   <!-- KAMPPLAN -->
   <section id="tab-kamp" class="grid">
     <div class="stack noprint">
