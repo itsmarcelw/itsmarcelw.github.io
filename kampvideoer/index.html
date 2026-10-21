@@ -104,7 +104,7 @@
     
     .form-group { margin-bottom: 16px; }
     label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; text-transform: uppercase; color: var(--muted); }
-    input[type="text"], input[type="url"], select {
+    input[type="text"], input[type="password"], input[type="url"], select {
       width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid var(--line);
       border-radius: 8px; background: var(--bg); color: var(--ink);
     }
@@ -161,42 +161,61 @@
         <h2>🔒 Træneradgang</h2>
         <p style="color: var(--muted); font-size: 14px;">Lås op for at tilføje nye kampvideoer til listen.</p>
         <form class="lock-form" onsubmit="tjekKode(event)">
-          <input type="password" id="kode-input" class="lock-input" placeholder="Kode" autocomplete="off">
-          <button type="submit" class="btn">Lås op</button>
+          <input type="password" id="kode-input" class="lock-input" placeholder="Kode" autocomplete="off" required>
+          <button type="submit" id="lock-btn" class="btn">Lås op</button>
         </form>
         <div id="fejl-tekst" class="error-msg">Forkert kode.</div>
       </section>
 
-      <!-- FORMULAR TIL AT TILFØJE VIDEOER -->
-      <section class="card" id="traener-indhold">
-        <h2>📹 Tilføj ny kampvideo</h2>
-        <form onsubmit="tilfoejVideo(event)">
-          <div class="form-group">
-            <label for="kategori">Vælg Kategori / Sæson</label>
-            <select id="kategori" required>
-              <option value="Kampe 26/27">Kampe 26/27</option>
-              <option value="Træningskampe 26/27">Træningskampe 26/27</option>
-              <option value="Kampe 25/26">Kampe 25/26</option>
-              <option value="Træningskampe 25/26">Træningskampe 25/26</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="titel">Kamp / Titel</label>
-            <input type="text" id="titel" placeholder="f.eks. Hjemmekamp mod Randers" required>
-          </div>
-          <div class="form-group">
-            <label for="dato">Dato / Info</label>
-            <input type="text" id="dato" placeholder="f.eks. Spillet: 15. oktober 2026" required>
-          </div>
-          <div class="form-group">
-            <label for="link">Video Link (YouTube, Google Drive, VEO osv.)</label>
-            <input type="url" id="link" placeholder="https://..." required>
-          </div>
-          <button type="submit" id="submit-btn" class="btn">Tilføj Video</button>
-        </form>
+      <!-- INDHOLD FOR INDLOGGET TRÆNER -->
+      <div id="traener-indhold">
+        <!-- FORMULAR TIL AT TILFØJE VIDEOER -->
+        <section class="card">
+          <h2>📹 Tilføj ny kampvideo</h2>
+          <form onsubmit="tilfoejVideo(event)">
+            <div class="form-group">
+              <label for="kategori">Vælg Kategori / Sæson</label>
+              <select id="kategori" required>
+                <option value="Kampe 26/27">Kampe 26/27</option>
+                <option value="Træningskampe 26/27">Træningskampe 26/27</option>
+                <option value="Kampe 25/26">Kampe 25/26</option>
+                <option value="Træningskampe 25/26">Træningskampe 25/26</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="titel">Kamp / Titel</label>
+              <input type="text" id="titel" placeholder="f.eks. Hjemmekamp mod Randers" required>
+            </div>
+            <div class="form-group">
+              <label for="dato">Dato / Info</label>
+              <input type="text" id="dato" placeholder="f.eks. Spillet: 15. oktober 2026" required>
+            </div>
+            <div class="form-group">
+              <label for="link">Video Link (YouTube, Google Drive, VEO osv.)</label>
+              <input type="url" id="link" placeholder="https://..." required>
+            </div>
+            <button type="submit" id="submit-btn" class="btn">Tilføj Video</button>
+          </form>
 
-        <div id="status-msg" class="status-box"></div>
-      </section>
+          <div id="status-msg" class="status-box"></div>
+        </section>
+
+        <!-- KODE SKIFT (GLOBALT I SKYEN) -->
+        <section class="card">
+          <h2>🔑 Skift træner-adgangskode</h2>
+          <p style="color: var(--muted); font-size: 13.5px; margin-bottom: 16px;">
+            Skift adgangskoden for træneradgang til kampvideoer. Ændringen træder i kraft i skyen for alle brugere.
+          </p>
+          <form onsubmit="skiftKode(event)">
+            <div class="form-group">
+              <label for="ny-kode-input">Ny Adgangskode</label>
+              <input type="password" id="ny-kode-input" placeholder="Indtast ny kode" required>
+            </div>
+            <button type="submit" id="change-pin-btn" class="btn">Opdater kode i skyen</button>
+          </form>
+          <div id="change-status-msg" class="status-box"></div>
+        </section>
+      </div>
     </main>
   </div>
 
@@ -219,8 +238,8 @@
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz456XrAofoqV0uBnYEWzldXj91MSaOpeqxN8g3prFH-slS6lk73Q9s7pMjjXTAKg5V/exec";
-    const TRÆNER_KODE = "8296";
 
+    let activePin = sessionStorage.getItem("video_active_pin") || "";
     let alleVideoer = [];
     let valgtKategori = "Kampe 26/27";
 
@@ -382,14 +401,77 @@
       }
     }
 
-    function tjekKode(e) {
+    // ONLINE VALIDERINGS-LOGIK VED LOGIN
+    async function tjekKode(e) {
       e.preventDefault();
-      const input = document.getElementById("kode-input").value;
-      if (input === TRÆNER_KODE) {
-        sessionStorage.setItem("video_traener_godkendt", "true");
-        visIndhold();
-      } else {
-        document.getElementById("fejl-tekst").style.display = "block";
+      const lockBtn = document.getElementById("lock-btn");
+      const inputVal = document.getElementById("kode-input").value.trim();
+      const fejlTekst = document.getElementById("fejl-tekst");
+
+      if (!inputVal) return;
+
+      lockBtn.disabled = true;
+      lockBtn.textContent = "Validerer...";
+      fejlTekst.style.display = "none";
+
+      try {
+        const resp = await fetch(`${APPS_SCRIPT_URL}?action=verifyPin&pin=${encodeURIComponent(inputVal)}`);
+        const data = await resp.json();
+
+        if (data.status === "success" && data.valid) {
+          activePin = inputVal;
+          sessionStorage.setItem("video_traener_godkendt", "true");
+          sessionStorage.setItem("video_active_pin", inputVal);
+          visIndhold();
+        } else {
+          fejlTekst.textContent = "Forkert kode.";
+          fejlTekst.style.display = "block";
+        }
+      } catch (err) {
+        fejlTekst.textContent = "Netværksfejl ved validering af kode.";
+        fejlTekst.style.display = "block";
+      } finally {
+        lockBtn.disabled = false;
+        lockBtn.textContent = "Lås op";
+      }
+    }
+
+    // GLOBALT SKIFT AF KODE VIA APPS SCRIPT
+    async function skiftKode(e) {
+      e.preventDefault();
+      const newPin = document.getElementById("ny-kode-input").value.trim();
+      const changeBtn = document.getElementById("change-pin-btn");
+      const statusMsg = document.getElementById("change-status-msg");
+
+      if (!newPin) return;
+
+      changeBtn.disabled = true;
+      changeBtn.textContent = "Gemmer i skyen...";
+      statusMsg.style.display = "none";
+
+      try {
+        const resp = await fetch(`${APPS_SCRIPT_URL}?action=changePin&currentPin=${encodeURIComponent(activePin)}&newPin=${encodeURIComponent(newPin)}`);
+        const data = await resp.json();
+
+        if (data.status === "success") {
+          activePin = newPin;
+          sessionStorage.setItem("video_active_pin", newPin);
+          statusMsg.className = "status-box success";
+          statusMsg.textContent = "✅ " + data.message;
+          statusMsg.style.display = "block";
+          document.getElementById("ny-kode-input").value = "";
+        } else {
+          statusMsg.className = "status-box error";
+          statusMsg.textContent = "❌ " + (data.message || "Kunne ikke ændre koden.");
+          statusMsg.style.display = "block";
+        }
+      } catch (err) {
+        statusMsg.className = "status-box error";
+        statusMsg.textContent = "❌ Der opstod en netværksfejl.";
+        statusMsg.style.display = "block";
+      } finally {
+        changeBtn.disabled = false;
+        changeBtn.textContent = "Opdater kode i skyen";
       }
     }
 
@@ -398,7 +480,7 @@
       document.getElementById("traener-indhold").style.display = "block";
     }
 
-    if (sessionStorage.getItem("video_traener_godkendt") === "true") {
+    if (sessionStorage.getItem("video_traener_godkendt") === "true" && activePin) {
       visIndhold();
     }
 
