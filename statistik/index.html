@@ -25,15 +25,15 @@
     }
 
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.5; font-size: 15px; }
-    .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.55; font-size: 15px; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 40px 16px 64px; }
 
-    /* Header & Navigation */
-    header.top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
-    .eyebrow { margin: 0 0 4px; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-    h1 { font-size: 26px; margin: 0; letter-spacing: -.02em; }
-    .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 14px; padding: 6px 12px; background: var(--accent-soft); border-radius: 99px; }
-    .back-btn:hover { opacity: 0.85; }
+    /* Header & Navigation (Streamlined) */
+    .back-link { display: inline-block; margin-bottom: 24px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 14px; }
+    .back-link:hover { text-decoration: underline; }
+    
+    h1 { font-size: 30px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -.02em; }
+    .sub { color: var(--muted); font-size: 15px; margin: 0 0 24px; max-width: 60ch; }
 
     /* Layout grid */
     .grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
@@ -41,7 +41,6 @@
 
     .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
     .card h2 { font-size: 18px; margin: 0 0 6px; }
-    .sub { color: var(--muted); font-size: 13.5px; margin: 0 0 16px; }
 
     /* Knapper og input */
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13.5px; font-weight: 600; transition: all .15s; text-align: center; width: 100%; }
@@ -100,7 +99,7 @@
   <div class="lock-card">
     <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
     <h2 style="margin: 0 0 4px;">Træner-Login</h2>
-    <p class="sub" style="margin-bottom: 16px;">Indtast kode for adgang til kampstatistik</p>
+    <p style="color:var(--muted); font-size:13.5px; margin-bottom: 16px;">Indtast kode for adgang til kampstatistik</p>
     <form id="lockForm">
       <input type="password" id="pinInput" placeholder="Kode" style="text-align:center; font-size: 1.1rem; letter-spacing: 2px;" required autofocus>
       <button class="btn primary" id="loginBtn" type="submit" style="margin-top:8px">Lås op</button>
@@ -110,12 +109,11 @@
 </div>
 
 <div class="wrap">
-  <header class="top">
-    <div>
-      <p class="eyebrow">Træner Værktøjer</p>
-      <h1>Kampstatistik (Google Drev)</h1>
-    </div>
-    <a href="../" class="back-btn">← Tilbage til Portalen</a>
+  <a href="../" class="back-link">← Tilbage til forsiden</a>
+
+  <header>
+    <h1>Kampstatistik</h1>
+    <p class="sub">Her kan du hente og analysere kampstatistikker direkte fra Google Drev.</p>
   </header>
 
   <main class="grid">
@@ -124,7 +122,7 @@
       
       <div class="card">
         <h2>📁 Kampe på Google Drev</h2>
-        <p class="sub">Henter automatisk alle statistik-filer fra din Drev-mappe.</p>
+        <p class="sub" style="font-size:13.5px; margin-bottom:12px;">Henter automatisk alle statistik-filer fra din Drev-mappe.</p>
 
         <!-- Søgning -->
         <div style="margin-bottom: 12px;">
@@ -142,14 +140,14 @@
       <!-- GOOGLE DRIVE SCRIPT URL INDSTILLING -->
       <div class="card">
         <h2>⚙️ Google Drev Forbindelse</h2>
-        <p class="sub">Linket til dit Google Apps Script WebApp.</p>
+        <p class="sub" style="font-size:13.5px; margin-bottom:12px;">Linket til dit Google Apps Script WebApp.</p>
         <input type="text" id="scriptUrlInput" value="https://script.google.com/macros/s/AKfycbxYFKSq6PJtGsc8IQfBMNoOlHcAFO0aDwgrQqHfpkovaOeeF-BOeqG1IGnpN5NYw9yY/exec">
       </div>
 
       <!-- MANUEL FILE UPLOAD -->
       <div class="card">
         <h2>⚡ Importer Lokal Fil</h2>
-        <p class="sub">Test en HTML-fil direkte fra din computer.</p>
+        <p class="sub" style="font-size:13.5px; margin-bottom:12px;">Test en HTML-fil direkte fra din computer.</p>
         <label class="btn primary" for="statFileInput" style="cursor:pointer">
           📁 Vælg lokal HTML-fil
         </label>
@@ -159,7 +157,7 @@
       <!-- KODE SKIFT (GLOBALT I SKYEN) -->
       <div class="card">
         <h2>Sikkerhed</h2>
-        <p class="sub">Skift træner-adgangskoden globalt for alle trænere.</p>
+        <p class="sub" style="font-size:13.5px; margin-bottom:12px;">Skift træner-adgangskoden globalt for alle trænere.</p>
         <input type="password" id="newPinInput" placeholder="Ny adgangskode">
         <button class="btn" id="changePinBtn" style="margin-top:8px">Opdater kode i skyen</button>
       </div>
