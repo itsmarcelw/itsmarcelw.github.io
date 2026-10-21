@@ -114,7 +114,7 @@ td.n{font-weight:500}
 .kpi span{font-size:var(--text-xs);color:var(--muted)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:var(--text-xs);color:var(--muted);margin:10px 0 0}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
-.court{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:16px}
+.court{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:16px}
 .setbox{border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--surface)}
 .setbox h3{font-size:var(--text-sm);font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between}
 .hist{list-style:none;padding:0;margin:0}
@@ -150,7 +150,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
 .issues li.warn{background:var(--warn-soft);color:#6e3f00}
 .issues li.ok{background:var(--ok-soft);color:#1d5a40}
 .issues li.info{background:#e1e8f3;color:#1f3a5f}
-.court{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+
 .field{position:relative;background:var(--field-bg);border:2px solid var(--field-border);border-radius:6px;padding:8px 6px 6px;margin-top:6px}
 .field .net{height:4px;background:var(--text);border-radius:2px;margin:-4px -2px 8px;position:relative;opacity:.8}
 .field .net::after{content:'NET';position:absolute;right:4px;top:-15px;font-size:10px;letter-spacing:.1em;color:var(--muted);font-weight:600}
@@ -851,7 +851,29 @@ function renderCourt(plan, sg, k){
     const code = plan.slots[i];
     return `<div class="slot"><div class="lab"><span>${i+1}</span>${pb(code)}</div>${slotSelect(plan,sg,k,i)}</div>`;
   };
-  return `<div class="setbox"><h3>Sæt ${sg.set+1}</h3><div class="field"><div class="net"></div><div class="freegrid">${sg.ids.map((_,i)=>cell(i)).join('')}</div></div></div>`;
+
+  let gridContent = '';
+  if (sg.ids.length === 6) {
+    // Volleyball positioner:
+    // Ved nettet (Forrest): Pos 4 (index 3), Pos 3 (index 2), Pos 2 (index 1)
+    // Bagved (Bagerst): Pos 5 (index 4), Pos 6 (index 5), Pos 1 (index 0)
+    gridContent = `
+      <div class="frow">
+        ${cell(3)}
+        ${cell(2)}
+        ${cell(1)}
+      </div>
+      <div class="frow">
+        ${cell(4)}
+        ${cell(5)}
+        ${cell(0)}
+      </div>
+    `;
+  } else {
+    gridContent = `<div class="freegrid">${sg.ids.map((_,i)=>cell(i)).join('')}</div>`;
+  }
+
+  return `<div class="setbox"><h3>Sæt ${sg.set+1}</h3><div class="field"><div class="net"></div>${gridContent}</div></div>`;
 }
 
 $('#planBody').addEventListener('change', e => {
