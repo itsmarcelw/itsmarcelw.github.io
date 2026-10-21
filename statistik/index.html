@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kampstatistik – Aalborg Volleyball Herre 4</title>
+  <title>Kampstatistik Arkiv – Aalborg Volleyball Herre 4</title>
   <meta name="robots" content="noindex">
   <style>
     :root {
@@ -26,7 +26,7 @@
 
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.5; font-size: 15px; }
-    .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 64px; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; }
 
     /* Header & Navigation */
     header.top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
@@ -36,7 +36,7 @@
     .back-btn:hover { opacity: 0.85; }
 
     /* Layout grid */
-    .grid { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+    .grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
     @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 
     .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
@@ -44,14 +44,18 @@
     .sub { color: var(--muted); font-size: 13.5px; margin: 0 0 16px; }
 
     /* Knapper og input */
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 9px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background .15s; width: 100%; text-align: center; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13.5px; font-weight: 600; transition: all .15s; text-align: center; width: 100%; }
     .btn:hover { background: var(--card-sub); }
     .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
     .btn.primary:hover { filter: brightness(1.1); }
-    
-    label.f { display: block; font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--ink); }
-    label.f span.h { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 2px; }
-    input[type=text], input[type=password] { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 13.5px; margin-top: 4px; }
+
+    /* Kamp-liste fra Drev */
+    .match-list { display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto; padding-right: 2px; }
+    .match-item { background: var(--card-sub); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: border-color .15s, transform .1s; display: flex; align-items: center; justify-content: space-between; }
+    .match-item:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .match-item.active { border-color: var(--accent); background: var(--accent-soft); }
+    .match-item .info b { display: block; font-size: 14.5px; color: var(--ink); }
+    .match-item .info span { font-size: 12px; color: var(--muted); }
 
     /* Scorecard & KPIs */
     .scorecard { display: flex; align-items: center; justify-content: space-between; background: var(--card-sub); padding: 16px 20px; border-radius: 10px; margin-bottom: 16px; }
@@ -84,6 +88,8 @@
     #lockScreen { position: fixed; inset: 0; background: rgba(16,18,22,0.92); backdrop-filter: blur(4px); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px; }
     .lock-card { background: var(--card); color: var(--ink); border-radius: 14px; padding: 28px; width: 100%; max-width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; border: 1px solid var(--line); }
     .hidden { display: none !important; }
+
+    input[type=text], input[type=password] { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 13.5px; }
   </style>
 </head>
 <body>
@@ -106,71 +112,66 @@
   <header class="top">
     <div>
       <p class="eyebrow">Træner Værktøjer</p>
-      <h1>Kampstatistik</h1>
+      <h1>Kampstatistik (Google Drev)</h1>
     </div>
     <a href="../" class="back-btn">← Tilbage til Portalen</a>
   </header>
 
   <main class="grid">
-    <!-- VENSTRE KOLONNE: VÆRKTØJER & IMPORT -->
+    <!-- VENSTRE KOLONNE: DREV MAPPE INDHOLD -->
     <div style="display:flex; flex-direction:column; gap:16px;">
       
-      <!-- IMPORTER -->
       <div class="card">
-        <h2>1. Importer Kamp</h2>
-        <p class="sub">Upload en HTML-statistikfil eksporteret fra videoanalysen.</p>
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <label class="btn primary" for="statFileInput" style="cursor:pointer">
-            📁 Vælg HTML-statistikfil
-          </label>
-          <input type="file" id="statFileInput" accept=".html,.htm" class="hidden">
-          <button class="btn" id="loadLastBtn">⚡ Indlæs seneste gemte kamp</button>
+        <h2>📁 Kampe på Google Drev</h2>
+        <p class="sub">Henter automatisk alle statistik-filer fra din Drev-mappe.</p>
+
+        <!-- Søgning -->
+        <div style="margin-bottom: 12px;">
+          <input type="text" id="searchMatchInput" placeholder="🔍 Søg i Drev-filer...">
+        </div>
+
+        <button class="btn" id="refreshDriveBtn" style="margin-bottom: 12px;">🔄 Genindlæs fra Drev</button>
+
+        <!-- Kamp-liste -->
+        <div class="match-list" id="matchListContainer">
+          <div style="text-align:center; color:var(--muted); padding:20px 0; font-size:13px;">Henter kampe fra Drev...</div>
         </div>
       </div>
 
-      <!-- KAMP- OG HOLDINFO -->
+      <!-- GOOGLE DRIVE SCRIPT URL INDSTILLING -->
       <div class="card">
-        <h2>2. Rediger Kamp- & Holdinfo</h2>
-        <p class="sub">Tilpas navne inden synkronisering med Google Regneark.</p>
-        <label class="f">Vores Holdnavn
-          <input type="text" id="homeTeamInput" value="Aalborg Volleyball 4">
-        </label>
-        <label class="f">Modstanders Holdnavn
-          <input type="text" id="awayTeamInput" value="Modstander">
-        </label>
-        <label class="f">Fanenavn i Google Regneark
-          <span class="h">Navnet på den nye fane der oprettes i arket.</span>
-          <input type="text" id="sheetTabNameInput" value="Kamp_2026-10-20">
-        </label>
+        <h2>⚙️ Google Drev Forbindelse</h2>
+        <p class="sub">Linket til dit Google Apps Script WebApp.</p>
+        <input type="text" id="scriptUrlInput" value="https://script.google.com/macros/s/AKfycbxYFKSq6PJtGsc8IQfBMNoOlHcAFO0aDwgrQqHfpkovaOeeF-BOeqG1IGnpN5NYw9yY/exec">
       </div>
 
-      <!-- GOOGLE SHEETS / REGNEARK INTEGRATION -->
+      <!-- MANUEL FILE UPLOAD -->
       <div class="card">
-        <h2>3. Google Regneark Sync</h2>
-        <p class="sub">Gem hele kampens statistik som en ny fane i Google Regnearket.</p>
-        <label class="f">Google Script WebApp URL
-          <input type="text" id="sheetWebappUrl" value="https://script.google.com/macros/s/AKfycbwA-C_js3BOoWJy5dvt0qe9ZuidBu87bLvylfGdteFvvxDL7ZCbTmRCpvPhBFTBznVr/exec">
+        <h2>⚡ Importer Lokal Fil</h2>
+        <p class="sub">Test en HTML-fil direkte fra din computer.</p>
+        <label class="btn primary" for="statFileInput" style="cursor:pointer">
+          📁 Vælg lokal HTML-fil
         </label>
-        <button class="btn primary" id="sendToSheetBtn" disabled style="margin-top:8px">📊 Gem i Google Regneark</button>
-        <p id="sheetStatus" style="font-size:12px; color:var(--muted); margin: 8px 0 0; text-align:center;"></p>
+        <input type="file" id="statFileInput" accept=".html,.htm" class="hidden">
       </div>
 
       <!-- KODE SKIFT -->
       <div class="card">
         <h2>Sikkerhed</h2>
-        <p class="sub">Skift træner-adgangskoden til kampsiden.</p>
+        <p class="sub">Skift træner-adgangskoden.</p>
         <input type="password" id="newPinInput" placeholder="Ny adgangskode">
-        <button class="btn" id="changePinBtn">Opdater kode</button>
+        <button class="btn" id="changePinBtn" style="margin-top:8px">Opdater kode</button>
       </div>
+
     </div>
 
     <!-- HØJRE KOLONNE: STATISTIK VISNING -->
     <div class="card" id="statDisplayCard">
       <div id="statDisplayContent">
-        <div style="text-align:center; padding: 40px 10px; color:var(--muted)">
-          <div style="font-size:36px; margin-bottom:8px;">📈</div>
-          <strong>Ingen statistik indlæst endnu</strong><br>
-          <span style="font-size:13px">Importer en HTML-fil fra kampanalysen til venstre.</span>
+        <div style="text-align:center; padding: 60px 10px; color:var(--muted)">
+          <div style="font-size:42px; margin-bottom:8px;">📊</div>
+          <strong style="font-size:16px;">Vælg en kamp i venstre side</strong><br>
+          <span style="font-size:13px">Statistikken indlæses og vises automatisk her.</span>
         </div>
       </div>
     </div>
@@ -180,10 +181,9 @@
 <script>
 (() => {
   const PIN_KEY = 'volley_stat_pin';
-  const DATA_KEY = 'volley_stat_last_html';
-  const SHEET_URL_KEY = 'volley_sheet_url';
   const JERSEY_KEY = 'volley_jersey_numbers';
-  const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwA-C_js3BOoWJy5dvt0qe9ZuidBu87bLvylfGdteFvvxDL7ZCbTmRCpvPhBFTBznVr/exec';
+  const SCRIPT_URL_KEY = 'volley_drive_script_url';
+  const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYFKSq6PJtGsc8IQfBMNoOlHcAFO0aDwgrQqHfpkovaOeeF-BOeqG1IGnpN5NYw9yY/exec';
 
   let currentPin = '1234';
   try {
@@ -197,8 +197,11 @@
     if (savedJerseys) jerseyNumbers = JSON.parse(savedJerseys);
   } catch(e) {}
 
+  let driveMatches = [];
+  let selectedFileId = null;
   let currentStatData = null;
   let activeStatView = 'total';
+  let searchQuery = '';
 
   // 1. PIN LOCK LOGIK
   const lockScreen = document.getElementById('lockScreen');
@@ -237,18 +240,123 @@
     }
   });
 
-  // 2. INPUT LISTENERS FOR HOLDNAVNE OG FANENAVN
-  const homeTeamInput = document.getElementById('homeTeamInput');
-  const awayTeamInput = document.getElementById('awayTeamInput');
-  const sheetTabNameInput = document.getElementById('sheetTabNameInput');
-
-  [homeTeamInput, awayTeamInput].forEach(inp => {
-    inp?.addEventListener('input', () => {
-      if (currentStatData) renderStatDisplay();
+  // 2. HENT KAMPLISTE FRA GOOGLE DREV
+  const scriptUrlInput = document.getElementById('scriptUrlInput');
+  if (scriptUrlInput) {
+    scriptUrlInput.value = localStorage.getItem(SCRIPT_URL_KEY) || DEFAULT_SCRIPT_URL;
+    scriptUrlInput.addEventListener('change', e => {
+      try { localStorage.setItem(SCRIPT_URL_KEY, e.target.value.trim()); } catch(err) {}
+      fetchDriveMatches();
     });
+  }
+
+  const matchListContainer = document.getElementById('matchListContainer');
+  const searchInput = document.getElementById('searchMatchInput');
+
+  async function fetchDriveMatches() {
+    if (!matchListContainer) return;
+    const scriptUrl = scriptUrlInput ? scriptUrlInput.value.trim() : DEFAULT_SCRIPT_URL;
+    
+    matchListContainer.innerHTML = `<div style="text-align:center; color:var(--muted); padding:20px 0; font-size:13px;">⏳ Henter fra Drev...</div>`;
+
+    try {
+      const resp = await fetch(scriptUrl);
+      const data = await resp.json();
+
+      if (data.status === "success" && data.matches) {
+        driveMatches = data.matches;
+        renderMatchList();
+      } else {
+        matchListContainer.innerHTML = `<div style="text-align:center; color:var(--bad); padding:10px; font-size:13px;">Kunne ikke hente Drev-mappe: ${data.message || 'Ukendt fejl'}</div>`;
+      }
+    } catch(err) {
+      matchListContainer.innerHTML = `<div style="text-align:center; color:var(--bad); padding:10px; font-size:13px;">Netværksfejl ved Drev-forbindelse.</div>`;
+    }
+  }
+
+  function renderMatchList() {
+    if (!matchListContainer) return;
+
+    const filtered = driveMatches.filter(m => {
+      return m.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    if (filtered.length === 0) {
+      matchListContainer.innerHTML = `<div style="text-align:center; color:var(--muted); padding:20px 0; font-size:13px;">Ingen filer fundet i Drev-mappen.</div>`;
+      return;
+    }
+
+    let html = '';
+    filtered.forEach(m => {
+      const isActive = m.id === selectedFileId ? 'active' : '';
+      const cleanName = m.name.replace(/\.html?$/i, '').replace(/_/g, ' ');
+      const dateStr = m.dateUpdated ? new Date(m.dateUpdated).toLocaleDateString('da-DK') : '';
+
+      html += `
+        <div class="match-item ${isActive}" data-fileid="${m.id}">
+          <div class="info">
+            <b>${cleanName}</b>
+            <span>📅 ${dateStr}</span>
+          </div>
+        </div>
+      `;
+    });
+    matchListContainer.innerHTML = html;
+  }
+
+  document.getElementById('refreshDriveBtn')?.addEventListener('click', fetchDriveMatches);
+
+  searchInput?.addEventListener('input', (e) => {
+    searchQuery = e.target.value.trim();
+    renderMatchList();
   });
 
-  // 3. STATISTIK HTML PARSER
+  // Klik på en kamp i Drev-listen
+  matchListContainer?.addEventListener('click', (e) => {
+    const item = e.target.closest('.match-item');
+    if (!item) return;
+
+    const fileId = item.dataset.fileid;
+    if (fileId) {
+      selectedFileId = fileId;
+      renderMatchList();
+      loadMatchFromDrive(fileId);
+    }
+  });
+
+  // 3. INDLÆS INDHOLD AF EN ENKELT FIL FRA DREV
+  async function loadMatchFromDrive(fileId) {
+    const container = document.getElementById('statDisplayContent');
+    const scriptUrl = scriptUrlInput ? scriptUrlInput.value.trim() : DEFAULT_SCRIPT_URL;
+
+    if (container) {
+      container.innerHTML = `<div style="text-align:center; padding: 60px 10px; color:var(--muted)">⏳ Henter statistik-fil fra Google Drev...</div>`;
+    }
+
+    try {
+      const resp = await fetch(`${scriptUrl}?fileId=${fileId}`);
+      const data = await resp.json();
+
+      if (data.status === "success" && data.content) {
+        currentStatData = parseStatHtml(data.content);
+        activeStatView = 'total';
+        renderStatDisplay();
+      } else {
+        throw new Error(data.message || 'Filen kunne ikke læses.');
+      }
+    } catch(err) {
+      if (container) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 40px 10px; color:var(--bad)">
+            ⚠️ <strong>Fejl ved hentning fra Drev</strong><br>
+            <span style="font-size:13px">${err.message}</span>
+          </div>
+        `;
+      }
+    }
+  }
+
+  // 4. STATISTIK HTML PARSER
   function parseStatHtml(htmlStr) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlStr, 'text/html');
@@ -270,15 +378,6 @@
         });
       }
     });
-
-    // Opdater modstanderens navn og fanenavn automatisk ved indlæsning
-    if (scoreOverview.length > 0 && scoreOverview[0].opp) {
-      const oppName = scoreOverview[0].opp;
-      if (awayTeamInput) awayTeamInput.value = oppName;
-      
-      const dateStr = new Date().toISOString().slice(0, 10);
-      if (sheetTabNameInput) sheetTabNameInput.value = `${oppName}_${dateStr}`;
-    }
 
     // Sæt & Total detaljer
     const sections = [];
@@ -308,23 +407,19 @@
     return { scoreOverview, sections };
   }
 
-  // 4. RENDER FUNKTION
+  // 5. RENDER FUNKTION
   function renderStatDisplay() {
     const container = document.getElementById('statDisplayContent');
-    const sendBtn = document.getElementById('sendToSheetBtn');
 
     if (!currentStatData || !currentStatData.sections.length) {
       if (container) {
-        container.innerHTML = `<div style="text-align:center; padding: 40px 10px; color:var(--muted)"><strong>Fejl ved indlæsning af statistik data</strong></div>`;
+        container.innerHTML = `<div style="text-align:center; padding: 40px 10px; color:var(--muted)"><strong>Kunne ikke tolke statistik-data</strong></div>`;
       }
-      if (sendBtn) sendBtn.disabled = true;
       return;
     }
 
-    if (sendBtn) sendBtn.disabled = false;
-
-    const homeName = homeTeamInput ? homeTeamInput.value.trim() || 'Aalborg Volleyball 4' : 'Aalborg Volleyball 4';
-    const awayName = awayTeamInput ? awayTeamInput.value.trim() || 'Modstander' : 'Modstander';
+    const homeName = 'Aalborg Volleyball 4';
+    const awayName = currentStatData.scoreOverview[0]?.opp || 'Modstander';
 
     // Samlet resultat
     let totalSetsWon = 0, totalSetsLost = 0;
@@ -448,16 +543,14 @@
     if (container) container.innerHTML = html;
   }
 
-  // Gem trøjenummer ændringer
+  // Gem trøjenummer ændringer lokalt
   document.getElementById('statDisplayCard')?.addEventListener('input', e => {
     if (e.target.classList.contains('jnum-input')) {
       const player = e.target.dataset.player;
       const val = e.target.value.trim();
       if (player) {
         jerseyNumbers[player] = val;
-        try {
-          localStorage.setItem(JERSEY_KEY, JSON.stringify(jerseyNumbers));
-        } catch(err) {}
+        try { localStorage.setItem(JERSEY_KEY, JSON.stringify(jerseyNumbers)); } catch(err) {}
       }
     }
   });
@@ -470,13 +563,14 @@
     renderStatDisplay();
   });
 
-  // Fil uploader
+  // Manuel Fil Uploader
   document.getElementById('statFileInput')?.addEventListener('change', async e => {
     const file = e.target.files[0];
     if (!file) return;
     try {
+      selectedFileId = null;
+      renderMatchList();
       const text = await file.text();
-      try { localStorage.setItem(DATA_KEY, text); } catch(err) {}
       currentStatData = parseStatHtml(text);
       activeStatView = 'total';
       renderStatDisplay();
@@ -485,139 +579,8 @@
     }
   });
 
-  document.getElementById('loadLastBtn')?.addEventListener('click', () => {
-    let text = null;
-    try { text = localStorage.getItem(DATA_KEY); } catch(e) {}
-    if (text) {
-      currentStatData = parseStatHtml(text);
-      activeStatView = 'total';
-      renderStatDisplay();
-    } else {
-      alert('Ingen tidligere gemt kamp fundet.');
-    }
-  });
-
-  // Autoload hvis der ligger en tidligere kamp
-  try {
-    const savedText = localStorage.getItem(DATA_KEY);
-    if (savedText) {
-      currentStatData = parseStatHtml(savedText);
-      renderStatDisplay();
-    }
-  } catch(e) {}
-
-  // 5. GOOGLE REGNEARK SYNC
-  const urlInput = document.getElementById('sheetWebappUrl');
-  let initialUrl = DEFAULT_SHEET_URL;
-  try {
-    initialUrl = localStorage.getItem(SHEET_URL_KEY) || DEFAULT_SHEET_URL;
-  } catch(e) {}
-  
-  if (urlInput) {
-    urlInput.value = initialUrl;
-    urlInput.addEventListener('change', e => {
-      try { localStorage.setItem(SHEET_URL_KEY, e.target.value.trim()); } catch(err) {}
-    });
-  }
-
-  document.getElementById('sendToSheetBtn')?.addEventListener('click', async () => {
-    const url = urlInput ? urlInput.value.trim() : DEFAULT_SHEET_URL;
-    const statusEl = document.getElementById('sheetStatus');
-    if (!url) {
-      alert('Indtast venligst din Google WebApp URL i feltet.');
-      return;
-    }
-    if (!currentStatData) return;
-
-    if (statusEl) {
-      statusEl.textContent = 'Sender til Google Regneark...';
-      statusEl.style.color = 'var(--muted)';
-    }
-
-    try {
-      const homeName = homeTeamInput ? homeTeamInput.value.trim() || 'Aalborg Volleyball 4' : 'Aalborg Volleyball 4';
-      const awayName = awayTeamInput ? awayTeamInput.value.trim() || 'Modstander' : 'Modstander';
-      const tabName = sheetTabNameInput ? sheetTabNameInput.value.trim() || 'Kamp' : 'Kamp';
-
-      let totalSetsWon = 0, totalSetsLost = 0;
-      currentStatData.scoreOverview.forEach(s => {
-        if (parseInt(s.ourScore) > parseInt(s.oppScore)) totalSetsWon++;
-        else if (parseInt(s.ourScore) < parseInt(s.oppScore)) totalSetsLost++;
-      });
-
-      // Opbyg alle tabeller (Total + Enkelte sæt) med samtlige spilleres tal
-      const exportTables = currentStatData.sections.map(sec => {
-        const tableHeader = ["#", "Spiller", "Spillet", "+/-", "Kills", "Fejl", "Swings", "Hit Pct", "Blocks", "Assist", "Digs", "Rec", "Serves", "Aces", "Srv Err"];
-        const rows = [tableHeader];
-
-        sec.rows.forEach((r, idx) => {
-          const isTotalRow = idx === sec.rows.length - 1;
-          const pName = r[0] || (isTotalRow ? 'I alt / Hold' : 'Ukendt');
-          const jNum = isTotalRow ? '' : (jerseyNumbers[pName] || '');
-
-          rows.push([
-            jNum,
-            pName,
-            r[1] || '0',  // Spillet
-            r[2] || '0',  // +/-
-            r[6] || '0',  // Kills
-            r[7] || '0',  // Fejl
-            r[5] || '0',  // Swings
-            r[8] || '0,000', // Hit Pct
-            r[9] || '0',  // Blocks
-            r[12] || '0', // Assist
-            r[13] || '0', // Digs
-            r[15] || '0', // Rec
-            r[17] || '0', // Serves
-            r[18] || '0', // Aces
-            r[19] || '0'  // Srv Err
-          ]);
-        });
-
-        return {
-          title: sec.title,
-          rows: rows
-        };
-      });
-
-      // Total sektion nøgletal
-      const totalSec = currentStatData.sections[currentStatData.sections.length - 1];
-      const totalRow = totalSec ? (totalSec.rows[totalSec.rows.length - 1] || []) : [];
-
-      const payload = {
-        sheetName: tabName,
-        homeTeam: homeName,
-        awayTeam: awayName,
-        score: `${totalSetsWon} - ${totalSetsLost}`,
-        kpis: {
-          hitPct: totalRow[8] || '-',
-          kills: totalRow[6] || '-',
-          aces: totalRow[18] || '-',
-          blocks: totalRow[9] || '-',
-          pointsPlayed: totalRow[1] || '-'
-        },
-        scoreOverview: currentStatData.scoreOverview,
-        tables: exportTables
-      };
-
-      await fetch(url, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload)
-      });
-
-      if (statusEl) {
-        statusEl.textContent = `✓ Gemt i fanen "${tabName}"!`;
-        statusEl.style.color = 'var(--ok)';
-      }
-    } catch(err) {
-      if (statusEl) {
-        statusEl.textContent = 'Fejl ved sending: ' + err.message;
-        statusEl.style.color = 'var(--bad)';
-      }
-    }
-  });
+  // Start hentning af Drev-filer
+  fetchDriveMatches();
 
 })();
 </script>
