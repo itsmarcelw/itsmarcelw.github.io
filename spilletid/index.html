@@ -261,8 +261,9 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 .plibero-screen label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 2px; color: var(--muted); }
 
 .psubs-screen { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
-.psub-lines-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; margin-top: 4px; }
-.psub-line-screen { border-bottom: 1px dashed var(--border); height: 18px; font-size: 10.5px; line-height: 18px; color: var(--faint); text-align: center; font-weight: 500; }
+.psub-lines-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; margin-top: 4px; }
+.psub-line-screen { display: flex; align-items: flex-end; gap: 4px; font-size: 10.5px; color: var(--faint); font-weight: 500; }
+.psub-line-screen span.line { flex: 1; border-bottom: 1px solid var(--border); height: 14px; }
 
 /* Skjul print-specifikke elementer på skærmen */
 .print-only-header { display: none; }
@@ -278,7 +279,7 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 @media print {
   @page {
     size: A4 portrait;
-    margin: 6mm 8mm;
+    margin: 0; /* Fjerner browserens standard header/footer (URL, dato, sidetal) */
   }
 
   /* Skjul alt på hele siden som udgangspunkt */
@@ -298,7 +299,8 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
     top: 0 !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 12mm 15mm !important; /* Giver indvendig margin i stedet for @page margin */
+    box-sizing: border-box !important;
     border: none !important;
     box-shadow: none !important;
     background: #ffffff !important;
@@ -317,7 +319,10 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
     align-items: center !important;
     border-bottom: 2px solid #000000 !important;
     padding-bottom: 4px !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 12px !important;
+    max-width: 175mm !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
   .print-only-header h2 {
     font-size: 15px !important;
@@ -339,8 +344,10 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
   .p5-unified-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    gap: 12px 15px !important;
     width: 100% !important;
+    max-width: 175mm !important;
+    margin: 0 auto !important; /* Centrerer banerne i midten af arket */
   }
 
   .pbox-screen {
@@ -466,16 +473,23 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
   .psub-lines-screen {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 2px 8px !important;
+    gap: 4px 10px !important;
   }
 
   .psub-line-screen {
-    border-bottom: 1px dashed #000000 !important;
-    height: 16px !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    gap: 4px !important;
     font-size: 9px !important;
-    line-height: 16px !important;
     color: #000000 !important;
     font-weight: 600 !important;
+    height: 16px !important;
+  }
+
+  .psub-line-screen span.line {
+    flex: 1 !important;
+    border-bottom: 1px solid #000000 !important;
+    height: 12px !important;
   }
 }
 </style>
@@ -571,8 +585,8 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
         </div>
         <label class="f" id="maxSubsWrap">Udskiftninger pr. sæt
           <select id="maxSubs">
-            <option value="6">6 (FIVB regel)</option>
-            <option value="8">8</option>
+            <option value="8">8 (Nye regler 2025)</option>
+            <option value="6">6 (Gl. FIVB regel)</option>
             <option value="99">Ubegrænset</option>
           </select>
         </label>
@@ -745,7 +759,7 @@ function doPost(e) {
       <p class="sub">Baseret på FIVB's officielle volleyballregler 2025–2028.</p>
       <div class="stack" style="font-size:var(--text-sm)">
         <div><b>Opstilling og positioner.</b> I 5-1 står hæveren diagonalt over for diagonalspilleren, de to kantspillere over for hinanden og de to centre over for hinanden på banen (Pos 1-6).</div>
-        <div><b>Udskiftninger.</b> Op til 6 udskiftninger pr. sæt. Startspillere må kun gå ud og ind igen én gang pr. sæt med den samme indskiftede spiller.</div>
+        <div><b>Udskiftninger.</b> Op til 8 udskiftninger pr. sæt (nye standardregler). Startspillere må kun gå ud og ind igen én gang pr. sæt med den samme indskiftede spiller.</div>
         <div><b>Libero.</b> Op til 2 liberoer. Liberoen tæller ikke som udskiftning og kan kun spille i bagerste række.</div>
         <div><b>2x2+1 A4 Printskabelon.</b> Opstillingsseddelen har bredere baner i et 2x2+1 format med automatisk linjeombrydning for lange spillernavne.</div>
       </div>
@@ -770,7 +784,7 @@ const clamp = (v,a,b) => Math.max(a,Math.min(b,Math.round(v)));
 const POS = { H:'Hæver', D:'Diagonal', K:'Kant', C:'Center', L:'Libero', U:'Alsidig' };
 const POS_ORDER = ['H','D','K','C','L','U'];
 const FORM = { '51': ['H','K','C','D','K','C'], '42': ['H','K','C','H','K','C'] };
-const DEFAULTS = { sets:3, court:6, segments:1, useSeason:true, formation:'51', useLibero:true, rules:true, maxSubs:6 };
+const DEFAULTS = { sets:3, court:6, segments:1, useSeason:true, formation:'51', useLibero:true, rules:true, maxSubs:8 };
 
 let state = load();
 let autoSyncTimer = null;
@@ -1381,14 +1395,16 @@ function renderPrintSheet() {
 
         <!-- Udskiftninger / Noter -->
         <div class="psubs-screen">
-          <b>Udskiftninger:</b>
+          <b>Udskiftninger (Maks 8):</b>
           <div class="psub-lines-screen">
-            <div class="psub-line-screen">1: ____ ➔ ____</div>
-            <div class="psub-line-screen">4: ____ ➔ ____</div>
-            <div class="psub-line-screen">2: ____ ➔ ____</div>
-            <div class="psub-line-screen">5: ____ ➔ ____</div>
-            <div class="psub-line-screen">3: ____ ➔ ____</div>
-            <div class="psub-line-screen">6: ____ ➔ ____</div>
+            ${[1, 2, 3, 4, 5, 6, 7, 8].map(i => `
+              <div class="psub-line-screen">
+                <span>${i}.</span>
+                <span class="line"></span>
+                <span style="font-size:8px; color:var(--muted)">ind for</span>
+                <span class="line"></span>
+              </div>
+            `).join('')}
           </div>
         </div>
       </div>
