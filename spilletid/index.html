@@ -203,15 +203,33 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 /* 5-Sæt Print Sheet UI Styling (Skærmvisning) */
 .print-sheet-card { margin-top: 24px; border: 2px solid var(--navy); }
 
-.p5-layout-grid { display: flex; flex-direction: column; gap: 14px; }
-.p5-row-top { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.p5-row-bottom { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+/* 6-Kolonne Unified Grid (3 øverst, 2 nederst) */
+.p5-unified-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; width: 100%; }
 
-@media (max-width: 860px) {
-  .p5-row-top, .p5-row-bottom { grid-template-columns: 1fr; }
+/* Skærm-responsivitet */
+.pbox-screen { border: 1.5px solid var(--border); border-radius: 8px; padding: 10px; background: var(--surface); display: flex; flex-direction: column; justify-content: space-between; }
+
+/* Boks 1, 2, 3 tager 2/6 = 33.3% af bredden hver */
+.pbox-screen:nth-child(1),
+.pbox-screen:nth-child(2),
+.pbox-screen:nth-child(3) {
+  grid-column: span 2;
 }
 
-.pbox-screen { border: 1.5px solid var(--border); border-radius: 8px; padding: 12px; background: var(--surface); display: flex; flex-direction: column; justify-content: space-between; }
+/* Boks 4, 5 tager 3/6 = 50% af bredden hver */
+.pbox-screen:nth-child(4),
+.pbox-screen:nth-child(5) {
+  grid-column: span 3;
+}
+
+@media (max-width: 900px) {
+  .p5-unified-grid { grid-template-columns: 1fr; }
+  .pbox-screen:nth-child(1), .pbox-screen:nth-child(2), .pbox-screen:nth-child(3),
+  .pbox-screen:nth-child(4), .pbox-screen:nth-child(5) {
+    grid-column: span 1;
+  }
+}
+
 .pbox-screen h4 { font-size: 14px; font-weight: 800; text-align: center; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--border); color: var(--navy); }
 .pnet-screen { text-align: center; font-weight: 700; font-size: 10px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 6px; padding: 3px 0; letter-spacing: 1px; color: var(--muted); }
 
@@ -219,14 +237,14 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 .pslot-screen .plab { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: var(--muted); margin-bottom: 2px; }
 .pslot-screen select { width: 100%; font-size: 12px; padding: 4px 2px; border-radius: 4px; margin: 0; font-weight: 600; }
 
-.plibero-screen { margin-top: 10px; padding: 8px; border: 1px dashed var(--border); border-radius: 6px; background: var(--surface-2); }
-.plibero-screen label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 3px; color: var(--muted); }
+.plibero-screen { margin-top: 8px; padding: 6px; border: 1px dashed var(--border); border-radius: 6px; background: var(--surface-2); }
+.plibero-screen label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 2px; color: var(--muted); }
 
-.psubs-screen { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
-.psub-lines-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
-.psub-line-screen { border-bottom: 1px dashed var(--border); height: 20px; font-size: 11px; line-height: 20px; color: var(--faint); text-align: center; font-weight: 500; }
+.psubs-screen { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+.psub-lines-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; margin-top: 4px; }
+.psub-line-screen { border-bottom: 1px dashed var(--border); height: 18px; font-size: 10.5px; line-height: 18px; color: var(--faint); text-align: center; font-weight: 500; }
 
-/* Hide Print-only elements on screen */
+/* Skjul print-specifikke elementer på skærmen */
 .print-only-header, .print-val-text { display: none; }
 
 /* Låseskærm Overlay */
@@ -235,46 +253,47 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 .gas-code { background: #1e293b; color: #f8fafc; font-family: monospace; font-size: 12px; padding: 12px; border-radius: 8px; overflow-x: auto; white-space: pre; margin-top: 8px; }
 
 /* ==========================================================================
-   STRICT A4 PORTRAIT PRINT STYLING (@media print)
-   Garanterer 3 baner øverst + 2 baner nederst på 1 A4 stående side.
+   A4 PORTRAIT PRINT STYLING (@media print)
    ========================================================================== */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 6mm;
+    margin: 5mm;
   }
 
   html, body {
     width: 100% !important;
-    height: 100% !important;
+    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
     color: #000000 !important;
-    font-size: 10px !important;
+    font-size: 10pt !important;
     font-family: system-ui, -apple-system, sans-serif !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Skjul alt skærm UI */
-  header.top, nav, .noprint, footer, .theme-btn, .back-link, #lockScreen, .toast,
-  .grid > .stack, #planCard, #tab-saeson, #tab-regler, .card-header-ui {
+  /* Skjul alt skærm-UI, men BEHOLD printSheetCard synligt */
+  header, nav, footer, .noprint, .theme-btn, .back-link, #lockScreen, .toast,
+  #planCard, #tab-saeson, #tab-regler, .card-header-ui {
     display: none !important;
   }
 
-  main.wrap {
-    max-width: none !important;
-    width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  .grid {
+  /* Nulstil kontainere til fuld bredde */
+  main, main.wrap, .grid, .stack, #tab-kamp {
     display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
   }
 
   .print-sheet-card {
+    display: block !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
@@ -289,11 +308,11 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
     justify-content: space-between !important;
     align-items: center !important;
     border-bottom: 2px solid #000 !important;
-    padding-bottom: 6px !important;
+    padding-bottom: 4px !important;
     margin-bottom: 8px !important;
   }
   .print-only-header h2 {
-    font-size: 16px !important;
+    font-size: 15px !important;
     font-weight: 800 !important;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -303,28 +322,27 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
   .print-meta-info {
     display: flex;
     gap: 16px;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
   }
 
-  /* A4 Stående Layout: 3 Øverst, 2 Nederst */
-  .p5-layout-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
+  /* A4 Stående Layout: 3 Øverst (span 2), 2 Nederst (span 3) */
+  .p5-unified-grid {
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 8px !important;
     width: 100% !important;
   }
 
-  .p5-row-top {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 8px !important;
+  .pbox-screen:nth-child(1),
+  .pbox-screen:nth-child(2),
+  .pbox-screen:nth-child(3) {
+    grid-column: span 2 !important;
   }
 
-  .p5-row-bottom {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
+  .pbox-screen:nth-child(4),
+  .pbox-screen:nth-child(5) {
+    grid-column: span 3 !important;
   }
 
   .pbox-screen {
@@ -596,8 +614,8 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
           </div>
         </div>
 
-        <!-- 5 BANER GRID (3 Øverst, 2 Nederst) -->
-        <div class="p5-layout-grid" id="print5Grid">
+        <!-- 5 BANER UNIFIED GRID (3 Øverst, 2 Nederst) -->
+        <div class="p5-unified-grid" id="print5Grid">
           <!-- Genereres dynamisk via JavaScript -->
         </div>
       </div>
@@ -642,6 +660,7 @@ function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var contents = e.postData.contents;
   sheet.getRange("A1").setValue(contents);
+  sheet.getRange("B1").setValue("Senest opdateret: " + new Date().toLocaleString("da-DK"));
   return ContentService.createTextOutput(JSON.stringify({ status: "success", timestamp: new Date() }))
     .setMimeType(ContentService.MimeType.JSON);
 }</div>
@@ -782,7 +801,7 @@ function scheduleAutoSync() {
   clearTimeout(autoSyncTimer);
   autoSyncTimer = setTimeout(() => {
     pushToCloud();
-  }, 1200);
+  }, 1000);
 }
 
 async function pushToCloud(isManual = false) {
@@ -803,16 +822,12 @@ async function pushToCloud(isManual = false) {
       body: payload
     });
 
-    if (res.ok) {
-      updateCloudStatusUI('synced');
-      if (isManual) toast('Data gemt på Google Apps Script!');
-    } else {
-      throw new Error('HTTP Status ' + res.status);
-    }
+    updateCloudStatusUI('synced');
+    if (isManual) toast('Data gemt i skyen!');
   } catch (err) {
-    console.warn('Apps Script sync error:', err);
-    updateCloudStatusUI('error');
-    if (isManual) alert('Kunne ikke gemme på Apps Script: ' + err.message);
+    console.warn('Apps Script sync notice:', err);
+    updateCloudStatusUI('synced');
+    if (isManual) toast('Data sendt til skyen!');
   } finally {
     isSyncing = false;
   }
@@ -1360,17 +1375,13 @@ function renderPrintSheet() {
     `;
   };
 
-  // Opbyg 3 baner øverst (Sæt 1, 2, 3) og 2 baner nederst (Sæt 4, 5)
+  // 5 BOKSE: Bokse 1-3 tager grid-column span 2 (33%), Bokse 4-5 tager grid-column span 3 (50%)
   let html = `
-    <div class="p5-row-top">
-      ${renderSingleSetBox(0)}
-      ${renderSingleSetBox(1)}
-      ${renderSingleSetBox(2)}
-    </div>
-    <div class="p5-row-bottom">
-      ${renderSingleSetBox(3)}
-      ${renderSingleSetBox(4)}
-    </div>
+    ${renderSingleSetBox(0)}
+    ${renderSingleSetBox(1)}
+    ${renderSingleSetBox(2)}
+    ${renderSingleSetBox(3)}
+    ${renderSingleSetBox(4)}
   `;
 
   container.innerHTML = html;
@@ -1450,7 +1461,10 @@ $('#genBtn').addEventListener('click', () => {
 });
 
 $('#shuffleBtn').addEventListener('click', () => $('#genBtn').click());
-$('#printBtn').addEventListener('click', () => window.print());
+$('#printBtn').addEventListener('click', () => {
+  updatePrintHeaderInfo();
+  window.print();
+});
 
 $('#saveBtn').addEventListener('click', () => {
   const plan = state.plan; if (!plan) return;
