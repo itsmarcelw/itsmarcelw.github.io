@@ -253,53 +253,41 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 .gas-code { background: #1e293b; color: #f8fafc; font-family: monospace; font-size: 12px; padding: 12px; border-radius: 8px; overflow-x: auto; white-space: pre; margin-top: 8px; }
 
 /* ==========================================================================
-   A4 PORTRAIT PRINT STYLING (@media print)
+   A4 PORTRAIT PRINT STYLING (@media print) - SKUDSIKKER SKJUL-TEKNIK
    ========================================================================== */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 5mm;
+    margin: 6mm;
   }
 
-  html, body {
+  /* Skjul alt på hele siden som udgangspunkt */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Gør KUN printskabelon-kortet og dets indhold synligt */
+  #printSheetCard, #printSheetCard * {
+    visibility: visible !important;
+  }
+
+  /* Positionér printskabelonen absolut øverst i venstre hjørne af papiret */
+  #printSheetCard {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
     width: 100% !important;
-    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
     background: #ffffff !important;
-    color: #000000 !important;
-    font-size: 10pt !important;
-    font-family: system-ui, -apple-system, sans-serif !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
   }
 
-  /* Skjul alt skærm-UI, men BEHOLD printSheetCard synligt */
-  header, nav, footer, .noprint, .theme-btn, .back-link, #lockScreen, .toast,
-  #planCard, #tab-saeson, #tab-regler, .card-header-ui {
+  /* Skjul digitale knapper og overskrifter inde i print-kortet */
+  .card-header-ui, .noprint {
     display: none !important;
-  }
-
-  /* Nulstil kontainere til fuld bredde */
-  main, main.wrap, .grid, .stack, #tab-kamp {
-    display: block !important;
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-  }
-
-  .print-sheet-card {
-    display: block !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: transparent !important;
-    width: 100% !important;
+    visibility: hidden !important;
   }
 
   /* Print Header Banner */
@@ -307,30 +295,31 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    border-bottom: 2px solid #000 !important;
+    border-bottom: 2px solid #000000 !important;
     padding-bottom: 4px !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 10px !important;
   }
   .print-only-header h2 {
-    font-size: 15px !important;
+    font-size: 16px !important;
     font-weight: 800 !important;
     letter-spacing: .05em;
     text-transform: uppercase;
-    color: #000 !important;
+    color: #000000 !important;
     margin: 0 !important;
   }
   .print-meta-info {
-    display: flex;
-    gap: 16px;
-    font-size: 10.5px;
-    font-weight: 700;
+    display: flex !important;
+    gap: 16px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #000000 !important;
   }
 
   /* A4 Stående Layout: 3 Øverst (span 2), 2 Nederst (span 3) */
   .p5-unified-grid {
     display: grid !important;
     grid-template-columns: repeat(6, 1fr) !important;
-    gap: 8px !important;
+    gap: 10px !important;
     width: 100% !important;
   }
 
@@ -346,53 +335,62 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
   }
 
   .pbox-screen {
-    border: 1.5px solid #000000 !important;
+    border: 2px solid #000000 !important;
     border-radius: 6px !important;
-    padding: 6px !important;
+    padding: 8px !important;
     background: #ffffff !important;
     box-shadow: none !important;
   }
 
   .pbox-screen h4 {
-    font-size: 13px !important;
+    font-size: 14px !important;
     font-weight: 800 !important;
-    color: #000 !important;
+    color: #000000 !important;
     margin-bottom: 4px !important;
     padding-bottom: 2px !important;
-    border-bottom: 1.5px solid #000 !important;
+    border-bottom: 1.5px solid #000000 !important;
+    text-align: center !important;
   }
 
   .pnet-screen {
     background: #e2e8f0 !important;
     border: 1px solid #000000 !important;
-    color: #000 !important;
-    font-size: 9px !important;
+    color: #000000 !important;
+    font-size: 9.5px !important;
     font-weight: 800 !important;
-    margin-bottom: 4px !important;
-    padding: 2px 0 !important;
+    margin-bottom: 6px !important;
+    padding: 3px 0 !important;
+    text-align: center !important;
+    letter-spacing: 1px !important;
   }
 
   .frow {
-    gap: 4px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 5px !important;
   }
+
   .frow + .frow {
-    margin-top: 4px !important;
-    padding-top: 4px !important;
-    border-top: 1px dashed #000 !important;
+    margin-top: 5px !important;
+    padding-top: 5px !important;
+    border-top: 1px dashed #000000 !important;
   }
 
   /* Position Boks på Print */
   .pslot-screen {
-    border: 1.5px solid #000 !important;
+    border: 1.5px solid #000000 !important;
     border-radius: 4px !important;
-    padding: 4px 5px !important;
-    min-height: 48px !important;
-    background: #fff !important;
+    padding: 4px 6px !important;
+    min-height: 52px !important;
+    background: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
   }
 
   .pslot-screen .plab {
-    font-size: 9px !important;
-    color: #000 !important;
+    font-size: 9.5px !important;
+    color: #000000 !important;
     font-weight: 800 !important;
     margin-bottom: 2px !important;
   }
@@ -403,58 +401,62 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 
   .print-val-text {
     display: block !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    color: #000 !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    color: #000000 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    min-height: 20px !important;
+    line-height: 20px !important;
   }
 
   .print-val-text.empty-pen-line {
-    border-bottom: 1.5px dashed #000 !important;
-    height: 18px !important;
+    border-bottom: 1.5px solid #000000 !important;
+    height: 20px !important;
     margin-top: 2px !important;
   }
 
   .plibero-screen {
-    margin-top: 6px !important;
-    padding: 4px 6px !important;
-    border: 1.5px solid #000 !important;
-    background: #fff !important;
+    margin-top: 8px !important;
+    padding: 5px 6px !important;
+    border: 1.5px solid #000000 !important;
+    border-radius: 4px !important;
+    background: #ffffff !important;
   }
 
   .plibero-screen label {
-    font-size: 9px !important;
-    color: #000 !important;
+    font-size: 9.5px !important;
+    color: #000000 !important;
     font-weight: 800 !important;
+    display: block !important;
   }
 
   .psubs-screen {
-    margin-top: 6px !important;
+    margin-top: 8px !important;
     padding-top: 4px !important;
-    border-top: 1.5px solid #000 !important;
-    font-size: 9px !important;
-    color: #000 !important;
+    border-top: 1.5px solid #000000 !important;
+    font-size: 9.5px !important;
+    color: #000000 !important;
   }
 
   .psubs-screen b {
-    display: block;
-    margin-bottom: 2px;
+    display: block !important;
+    margin-bottom: 2px !important;
   }
 
   .psub-lines-screen {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 3px 6px !important;
+    gap: 3px 8px !important;
   }
 
   .psub-line-screen {
-    border-bottom: 1px dashed #000 !important;
-    height: 16px !important;
+    border-bottom: 1px dashed #000000 !important;
+    height: 18px !important;
     font-size: 9.5px !important;
-    line-height: 16px !important;
-    color: #000 !important;
+    line-height: 18px !important;
+    color: #000000 !important;
     font-weight: 600 !important;
   }
 }
