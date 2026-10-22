@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spilletid – Fair fordeling & 5-Sæt Printskabelon til Volley</title>
-<meta name="description" content="Planlæg fair spilletid til volleyballkampe – sæt for sæt med interaktiv og printbar 5-baners opstillingsseddel (A4 Stående).">
+<meta name="description" content="Planlæg fair spilletid til volleyballkampe – sæt for sæt med interaktiv og printbar 5-baners opstillingsseddel (2x2+1 A4 Stående).">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23e8743b'/><path d='M16 2c4 6 4 22 0 28M3 11c8 2 18 2 26 0M4 22c8-3 16-3 24 0' stroke='%23fff' stroke-width='2' fill='none'/></svg>">
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
@@ -200,42 +200,62 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 
 .freegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; }
 
-/* 5-Sæt Print Sheet UI Styling (Skærmvisning) */
+/* 5-Sæt Print Sheet UI Styling (2x2+1 Grid) */
 .print-sheet-card { margin-top: 24px; border: 2px solid var(--navy); }
 
-/* 6-Kolonne Unified Grid (3 øverst, 2 nederst) */
-.p5-unified-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; width: 100%; }
-
-/* Skærm-responsivitet */
-.pbox-screen { border: 1.5px solid var(--border); border-radius: 8px; padding: 10px; background: var(--surface); display: flex; flex-direction: column; justify-content: space-between; }
-
-/* Boks 1, 2, 3 tager 2/6 = 33.3% af bredden hver */
-.pbox-screen:nth-child(1),
-.pbox-screen:nth-child(2),
-.pbox-screen:nth-child(3) {
-  grid-column: span 2;
+/* 2x2+1 Grid Layout */
+.p5-unified-grid { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 12px; 
+  width: 100%; 
 }
 
-/* Boks 4, 5 tager 3/6 = 50% af bredden hver */
-.pbox-screen:nth-child(4),
+.pbox-screen { 
+  border: 1.5px solid var(--border); 
+  border-radius: 8px; 
+  padding: 10px; 
+  background: var(--surface); 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+}
+
+/* Sæt 5 placeres i midten (2x2+1) */
 .pbox-screen:nth-child(5) {
-  grid-column: span 3;
+  grid-column: 1 / -1;
+  width: calc(50% - 6px);
+  justify-self: center;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .p5-unified-grid { grid-template-columns: 1fr; }
-  .pbox-screen:nth-child(1), .pbox-screen:nth-child(2), .pbox-screen:nth-child(3),
-  .pbox-screen:nth-child(4), .pbox-screen:nth-child(5) {
+  .pbox-screen:nth-child(5) {
     grid-column: span 1;
+    width: 100%;
   }
 }
 
 .pbox-screen h4 { font-size: 14px; font-weight: 800; text-align: center; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--border); color: var(--navy); }
 .pnet-screen { text-align: center; font-weight: 700; font-size: 10px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 6px; padding: 3px 0; letter-spacing: 1px; color: var(--muted); }
 
-.pslot-screen { border: 1px solid var(--border); border-radius: 6px; padding: 6px; background: var(--slot-bg); min-height: 52px; display: flex; flex-direction: column; justify-content: space-between; }
+.pslot-screen { border: 1px solid var(--border); border-radius: 6px; padding: 6px; background: var(--slot-bg); min-height: 54px; display: flex; flex-direction: column; justify-content: space-between; }
 .pslot-screen .plab { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: var(--muted); margin-bottom: 2px; }
 .pslot-screen select { width: 100%; font-size: 12px; padding: 4px 2px; border-radius: 4px; margin: 0; font-weight: 600; }
+
+.print-val-text {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.15;
+  text-align: center;
+  min-height: 24px;
+  margin-top: 2px;
+}
 
 .plibero-screen { margin-top: 8px; padding: 6px; border: 1px dashed var(--border); border-radius: 6px; background: var(--surface-2); }
 .plibero-screen label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 2px; color: var(--muted); }
@@ -245,7 +265,7 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 .psub-line-screen { border-bottom: 1px dashed var(--border); height: 18px; font-size: 10.5px; line-height: 18px; color: var(--faint); text-align: center; font-weight: 500; }
 
 /* Skjul print-specifikke elementer på skærmen */
-.print-only-header, .print-val-text { display: none; }
+.print-only-header { display: none; }
 
 /* Låseskærm Overlay */
 #lockScreen { position: fixed; inset: 0; background: var(--navy); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -253,12 +273,12 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
 .gas-code { background: #1e293b; color: #f8fafc; font-family: monospace; font-size: 12px; padding: 12px; border-radius: 8px; overflow-x: auto; white-space: pre; margin-top: 8px; }
 
 /* ==========================================================================
-   A4 PORTRAIT PRINT STYLING (@media print) - SKUDSIKKER SKJUL-TEKNIK
+   A4 PORTRAIT PRINT STYLING (@media print) - 2x2+1 LAYOUT MED TEKSTOMBRYDNING
    ========================================================================== */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 6mm;
+    margin: 6mm 8mm;
   }
 
   /* Skjul alt på hele siden som udgangspunkt */
@@ -297,10 +317,10 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
     align-items: center !important;
     border-bottom: 2px solid #000000 !important;
     padding-bottom: 4px !important;
-    margin-bottom: 10px !important;
+    margin-bottom: 8px !important;
   }
   .print-only-header h2 {
-    font-size: 16px !important;
+    font-size: 15px !important;
     font-weight: 800 !important;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -315,35 +335,31 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
     color: #000000 !important;
   }
 
-  /* A4 Stående Layout: 3 Øverst (span 2), 2 Nederst (span 3) */
+  /* A4 Stående 2x2+1 Grid Layout */
   .p5-unified-grid {
     display: grid !important;
-    grid-template-columns: repeat(6, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
     width: 100% !important;
-  }
-
-  .pbox-screen:nth-child(1),
-  .pbox-screen:nth-child(2),
-  .pbox-screen:nth-child(3) {
-    grid-column: span 2 !important;
-  }
-
-  .pbox-screen:nth-child(4),
-  .pbox-screen:nth-child(5) {
-    grid-column: span 3 !important;
   }
 
   .pbox-screen {
     border: 2px solid #000000 !important;
     border-radius: 6px !important;
-    padding: 8px !important;
+    padding: 7px 8px !important;
     background: #ffffff !important;
     box-shadow: none !important;
   }
 
+  /* Sæt 5 centreret i bunden (2x2+1) */
+  .pbox-screen:nth-child(5) {
+    grid-column: 1 / -1 !important;
+    width: calc(50% - 5px) !important;
+    justify-self: center !important;
+  }
+
   .pbox-screen h4 {
-    font-size: 14px !important;
+    font-size: 13.5px !important;
     font-weight: 800 !important;
     color: #000000 !important;
     margin-bottom: 4px !important;
@@ -358,8 +374,8 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
     color: #000000 !important;
     font-size: 9.5px !important;
     font-weight: 800 !important;
-    margin-bottom: 6px !important;
-    padding: 3px 0 !important;
+    margin-bottom: 5px !important;
+    padding: 2px 0 !important;
     text-align: center !important;
     letter-spacing: 1px !important;
   }
@@ -376,11 +392,11 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
     border-top: 1px dashed #000000 !important;
   }
 
-  /* Position Boks på Print */
+  /* Position Boks på Print med automatisk tekstombrydning */
   .pslot-screen {
     border: 1.5px solid #000000 !important;
     border-radius: 4px !important;
-    padding: 4px 6px !important;
+    padding: 4px 5px !important;
     min-height: 52px !important;
     background: #ffffff !important;
     display: flex !important;
@@ -399,27 +415,29 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
     display: none !important;
   }
 
+  /* Tekstombrydning for navne (Fornavn øverst, efternavn under) */
   .print-val-text {
     display: block !important;
-    font-size: 11.5px !important;
+    font-size: 11px !important;
     font-weight: 700 !important;
     color: #000000 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    min-height: 20px !important;
-    line-height: 20px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+    min-height: 24px !important;
   }
 
   .print-val-text.empty-pen-line {
     border-bottom: 1.5px solid #000000 !important;
-    height: 20px !important;
+    height: 22px !important;
     margin-top: 2px !important;
   }
 
   .plibero-screen {
-    margin-top: 8px !important;
-    padding: 5px 6px !important;
+    margin-top: 6px !important;
+    padding: 4px 6px !important;
     border: 1.5px solid #000000 !important;
     border-radius: 4px !important;
     background: #ffffff !important;
@@ -433,7 +451,7 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
   }
 
   .psubs-screen {
-    margin-top: 8px !important;
+    margin-top: 6px !important;
     padding-top: 4px !important;
     border-top: 1.5px solid #000000 !important;
     font-size: 9.5px !important;
@@ -448,14 +466,14 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
   .psub-lines-screen {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 3px 8px !important;
+    gap: 2px 8px !important;
   }
 
   .psub-line-screen {
     border-bottom: 1px dashed #000000 !important;
-    height: 18px !important;
-    font-size: 9.5px !important;
-    line-height: 18px !important;
+    height: 16px !important;
+    font-size: 9px !important;
+    line-height: 16px !important;
     color: #000000 !important;
     font-weight: 600 !important;
   }
@@ -597,12 +615,12 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
       <!-- 5-SÆT PRINT-SKABELON CARD -->
       <div class="card print-sheet-card" id="printSheetCard">
         <div class="card-header-ui noprint">
-          <h2>5-Sæt Print-Skabelon (A4 Stående Opstillingsseddel)</h2>
+          <h2>5-Sæt Print-Skabelon (A4 Stående 2x2+1 Opstillingsseddel)</h2>
           <p class="sub">Udfyld direkte fra holdets spilletidsliste eller print en blank skabelon til udfyldning med kuglepen i hallen.</p>
           <div class="actions" style="margin-bottom:16px;">
             <button class="btn" id="transferPlanBtn">Overfør fra kampplan</button>
             <button class="btn" id="clearSheetBtn">Tøm alle (Blank til kuglepen)</button>
-            <button class="btn primary" id="printSheetBtn">Print 5-Sæt Skema (A4 Stående)</button>
+            <button class="btn primary" id="printSheetBtn">Print A4 Stående</button>
           </div>
         </div>
 
@@ -616,7 +634,7 @@ footer { color: var(--faint); font-size: var(--text-xs); text-align: center; pad
           </div>
         </div>
 
-        <!-- 5 BANER UNIFIED GRID (3 Øverst, 2 Nederst) -->
+        <!-- 5 BANER UNIFIED GRID (2x2+1 Layout) -->
         <div class="p5-unified-grid" id="print5Grid">
           <!-- Genereres dynamisk via JavaScript -->
         </div>
@@ -729,7 +747,7 @@ function doPost(e) {
         <div><b>Opstilling og positioner.</b> I 5-1 står hæveren diagonalt over for diagonalspilleren, de to kantspillere over for hinanden og de to centre over for hinanden på banen (Pos 1-6).</div>
         <div><b>Udskiftninger.</b> Op til 6 udskiftninger pr. sæt. Startspillere må kun gå ud og ind igen én gang pr. sæt med den samme indskiftede spiller.</div>
         <div><b>Libero.</b> Op til 2 liberoer. Liberoen tæller ikke som udskiftning og kan kun spille i bagerste række.</div>
-        <div><b>5-Sæt Printskabelon.</b> Opstillingsseddelen er tilpasset A4 Stående (3 baner øverst, 2 nederst) med store boks-størrelser til kuglepen.</div>
+        <div><b>2x2+1 A4 Printskabelon.</b> Opstillingsseddelen har bredere baner i et 2x2+1 format med automatisk linjeombrydning for lange spillernavne.</div>
       </div>
     </div>
   </section>
@@ -818,7 +836,7 @@ async function pushToCloud(isManual = false) {
 
   try {
     const payload = JSON.stringify(state);
-    const res = await fetch(state.gasUrl, {
+    await fetch(state.gasUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: payload
@@ -1293,7 +1311,7 @@ function renderCourt(plan, sg, k){
   return `<div class="setbox"><h3>Sæt ${sg.set+1} <span style="font-weight:400;font-size:12px;color:var(--muted)">${G>1?`Del ${sg.part+1}`:''}</span></h3><div class="field"><div class="net"></div>${gridContent}</div></div>`;
 }
 
-/* ---------- 5-SÆT PRINT-SKABELON LOGIK (A4 STÅENDE: 3 ØVERST, 2 NEDERST) ---------- */
+/* ---------- 5-SÆT PRINT-SKABELON LOGIK (2x2+1 A4 STÅENDE) ---------- */
 
 function renderPrintSheet() {
   const container = $('#print5Grid');
@@ -1377,7 +1395,7 @@ function renderPrintSheet() {
     `;
   };
 
-  // 5 BOKSE: Bokse 1-3 tager grid-column span 2 (33%), Bokse 4-5 tager grid-column span 3 (50%)
+  // 2x2+1 GRID: Bokse 1-4 fylder 50% hver (grid col 1 & 2), Boks 5 centreret i midten i bunden
   let html = `
     ${renderSingleSetBox(0)}
     ${renderSingleSetBox(1)}
