@@ -8,7 +8,6 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23e8743b'/><path d='M16 2c4 6 4 22 0 28M3 11c8 2 18 2 26 0M4 22c8-3 16-3 24 0' stroke='%23fff' stroke-width='2' fill='none'/></svg>">
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{
   --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);
@@ -17,7 +16,6 @@
   --text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
   --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
   
-  /* Lyst Tema (Default) */
   --bg:#f5f1ea; --surface:#fffdf9; --surface-2:#efe9df; --border:#ddd4c6;
   --text:#1c2333; --muted:#5f6675; --faint:#8a8f9a;
   --navy:#1f3a5f; --accent:#d9622b; --accent-soft:#fbe4d6;
@@ -27,7 +25,6 @@
 }
 
 body.dark {
-  /* Mørkt Tema */
   --bg:#121824; --surface:#1a2332; --surface-2:#243044; --border:#324158;
   --text:#e6edf8; --muted:#94a3b8; --faint:#64748b;
   --navy:#0f1d30; --accent:#e8743b; --accent-soft:#4a2818;
@@ -43,11 +40,9 @@ button,input,select{font:inherit;color:inherit}
 h1,h2,h3{margin:0;line-height:1.2}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
 
-/* Tilbage-link (Streamlined) */
 .back-link { display: inline-block; margin-bottom: 20px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 14px; }
 .back-link:hover { text-decoration: underline; }
 
-/* Toppanel Navigation */
 header.top{position:sticky;top:0;z-index:100;background:var(--navy);color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.15);transition:background .2s}
 header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
 header.top h1{font-size:var(--text-lg);font-weight:700;letter-spacing:-.01em;color:#fff}
@@ -62,6 +57,12 @@ nav.tabs button[aria-selected=true]{background:#fff;color:var(--navy)}
 .nav-actions{display:flex;align-items:center;gap:10px}
 .theme-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:999px;cursor:pointer;font-size:var(--text-xs);font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:background .2s}
 .theme-btn:hover{background:rgba(255,255,255,.25)}
+
+/* Sync Badge */
+.sync-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(255,255,255,.15);color:#fff}
+.sync-badge.ok{background:#2f7d5b;color:#fff}
+.sync-badge.syncing{background:#d9622b;color:#fff}
+.sync-badge.err{background:#b3261e;color:#fff}
 
 main{padding:24px 0 60px}
 .grid{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:20px;align-items:start}
@@ -88,14 +89,13 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .addrow{display:flex;gap:8px}
 .addrow input{margin-top:0}
 .roster{list-style:none;margin:12px 0 0;padding:0;border-top:1px solid var(--border)}
-.roster li{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.roster li{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
 .roster .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--text-sm);font-weight:500}
 .roster li.absent .name{color:var(--faint);text-decoration:line-through}
 .roster select{width:auto;margin:0;padding:4px 6px;font-size:var(--text-xs)}
 .chk{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;flex:none}
 .count{font-size:var(--text-xs);color:var(--muted);margin-top:8px}
 .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:var(--text-xs);font-weight:600;background:var(--surface-2);color:var(--muted)}
-.pill.s{background:#e1e8f3;color:var(--navy)}
 .empty{padding:28px 10px;text-align:center;color:var(--muted);font-size:var(--text-sm)}
 .empty strong{display:block;color:var(--text);font-size:var(--text-base);margin-bottom:4px}
 .tablewrap{overflow-x:auto;margin:0 -4px;padding:0 4px}
@@ -104,52 +104,16 @@ th,td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);w
 th{font-weight:600;color:var(--muted);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;background:var(--surface)}
 td.n,th.n{text-align:left;position:sticky;left:0;background:var(--surface);z-index:1}
 td.n{font-weight:500}
-.cell{display:inline-flex;width:30px;height:30px;border-radius:7px;align-items:center;justify-content:center;cursor:pointer;border:1px solid transparent;font-weight:600;font-size:var(--text-xs);user-select:none}
-.cell.on{background:var(--accent);color:#fff}
-.cell.off{background:var(--surface-2);color:var(--faint);border-color:var(--border)}
-.cell:hover{filter:brightness(.95)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
-.kpi{background:var(--surface-2);border-radius:8px;padding:10px 12px}
-.kpi b{display:block;font-size:var(--text-lg);font-weight:700}
-.kpi span{font-size:var(--text-xs);color:var(--muted)}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:var(--text-xs);color:var(--muted);margin:10px 0 0}
-.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
-.court{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:16px}
-.setbox{border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--surface)}
-.setbox h3{font-size:var(--text-sm);font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between}
-.hist{list-style:none;padding:0;margin:0}
-.hist li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:var(--text-sm)}
-.hist li small{color:var(--muted);display:block}
-.hidden{display:none!important}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:999px;font-size:var(--text-sm);box-shadow:var(--shadow);opacity:0;transition:opacity .2s;pointer-events:none;z-index:10000}
-.toast.show{opacity:1}
-footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20px}
-@media print{
-  header.top nav,.noprint,footer,.theme-btn,.back-link{display:none!important}
-  body{background:#fff;color:#000}.grid{grid-template-columns:1fr}.card{box-shadow:none;border:0;padding:0}
-  .cell.on{background:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-}
-.roster li{flex-wrap:wrap}
-.roster .pos{width:auto;margin:0;padding:4px 6px;font-size:var(--text-xs)}
-.altbtn{font-size:var(--text-xs);padding:4px 8px}
-.alts{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 0 2px 28px;font-size:var(--text-xs);color:var(--muted)}
-.chip{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:999px;padding:3px 10px;font-size:var(--text-xs);cursor:pointer;font-weight:500}
-.chip[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+
 .pb{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;border-radius:5px;font-size:var(--text-xs);font-weight:700;color:#fff;line-height:1}
 .pb.H{background:#1f3a5f}.pb.D{background:#6b46a8}.pb.K{background:#c4541f}.pb.C{background:#2f7d5b}.pb.L{background:#9a6b00}.pb.U,.pb.A{background:#5f6675}
 .cellp{display:inline-flex;width:30px;height:30px;border-radius:7px;align-items:center;justify-content:center;font-weight:700;font-size:var(--text-xs);color:#fff}
 .cellp.off{background:var(--surface-2);border:1px solid var(--border);color:var(--faint)}
 .cellp.H{background:#1f3a5f}.cellp.D{background:#6b46a8}.cellp.K{background:#c4541f}.cellp.C{background:#2f7d5b}.cellp.L{background:#9a6b00}.cellp.A,.cellp.U{background:#5f6675}
-.cellp.sec{box-shadow:inset 0 0 0 2px #fff,0 0 0 2px #b3261e}
-.posov{width:100%;margin-top:12px;font-size:var(--text-xs)}
-.posov td,.posov th{padding:6px 4px}
-.posov td:first-child,.posov th:first-child{text-align:left}
-.issues{list-style:none;margin:0 0 14px;padding:0}
-.issues li{border-radius:8px;padding:8px 12px;font-size:var(--text-sm);margin-bottom:6px}
-.issues li.err{background:#fbe0de;color:#7d1a14}
-.issues li.warn{background:var(--warn-soft);color:#6e3f00}
-.issues li.ok{background:var(--ok-soft);color:#1d5a40}
-.issues li.info{background:#e1e8f3;color:#1f3a5f}
+
+.court{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:16px}
+.setbox{border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.setbox h3{font-size:var(--text-sm);font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between}
 
 .field{position:relative;background:var(--field-bg);border:2px solid var(--field-border);border-radius:6px;padding:8px 6px 6px;margin-top:6px}
 .field .net{height:4px;background:var(--text);border-radius:2px;margin:-4px -2px 8px;position:relative;opacity:.8}
@@ -159,15 +123,66 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
 .slot{background:var(--slot-bg);border-radius:6px;padding:4px 5px;border:1px solid var(--border);min-width:0}
 .slot .lab{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px}
 .slot select{margin:0;padding:3px 2px;font-size:12px;width:100%;border-radius:5px}
-.slot.err{border-color:#b3261e;background:#fdf0ef}
-.slot.sec{border-color:#d08a2c}
-.libline{display:flex;gap:6px;align-items:center;margin-top:6px;font-size:var(--text-xs);color:var(--muted)}
-.libline select{margin:0;padding:3px 4px;font-size:12px;flex:1}
-.subcount{font-size:var(--text-xs);color:var(--muted);margin-top:4px}
-.subcount.bad{color:#b3261e;font-weight:700}
 .freegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:5px}
 
-/* Låseskærm Overlay */
+/* 5 BANER PRINT SKABELON (SKÆRM STYLING) */
+.print-template-sec { margin-top:30px; }
+.print-5court-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:12px; }
+.pcourt-card { border:1px solid var(--border); border-radius:8px; padding:8px; background:var(--surface); }
+.pcourt-header { font-weight:700; font-size:12px; text-align:center; border-bottom:1px solid var(--border); padding-bottom:4px; margin-bottom:6px; }
+.pcourt-field { background:var(--field-bg); border:1.5px solid var(--field-border); border-radius:4px; padding:4px; position:relative; }
+.pcourt-net { height:3px; background:var(--text); opacity:.8; margin:-2px -2px 4px; border-radius:2px; }
+.pcourt-row { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+.pcourt-row+.pcourt-row { margin-top:3px; padding-top:3px; border-top:1px dashed var(--field-border); }
+.pslot { background:var(--slot-bg); border:1px solid var(--border); border-radius:4px; padding:2px; text-align:center; min-height:36px; display:flex; flex-direction:column; justify-content:center; }
+.pslot .posnum { font-size:9px; font-weight:700; color:var(--muted); }
+.pslot select { font-size:10px; padding:1px; margin:0; border:0; background:transparent; width:100%; text-align:center; }
+.pcourt-extra { margin-top:6px; font-size:10px; display:flex; flex-direction:column; gap:4px; }
+.pcourt-extra-row { display:flex; align-items:center; justify-content:space-between; gap:4px; }
+.pcourt-extra-row label { font-weight:600; font-size:10px; color:var(--muted); }
+.pcourt-extra-row select, .pcourt-extra-row input { font-size:10px; padding:2px; margin:0; border-radius:4px; border:1px solid var(--border); }
+
+/* A4 LANDSCAPE PRINT STYLING */
+@media print {
+  @page { size: A4 landscape; margin: 6mm; }
+  body { background:#fff!important; color:#000!important; font-size:11px; }
+  header.top, nav.tabs, .noprint, footer, .theme-btn, .back-link, #lockScreen, .toast { display:none!important; }
+  main.wrap { max-width:100%!important; padding:0!important; margin:0!important; }
+  .card { border:none!important; box-shadow:none!important; padding:0!important; margin:0!important; }
+  
+  .print-only-header { display:block!important; margin-bottom:8px; border-bottom:2px solid #000; padding-bottom:4px; }
+  .print-only-header table { width:100%; border:none; }
+  .print-only-header td { border:none; padding:2px; text-align:left; font-size:12px; font-weight:600; }
+  
+  .print-5court-grid { display:grid!important; grid-template-columns:repeat(5, 1fr)!important; gap:6px!important; margin-top:4px!important; }
+  .pcourt-card { border:1.5px solid #000!important; border-radius:4px!important; padding:5px!important; background:#fff!important; page-break-inside:avoid; }
+  .pcourt-header { font-size:12px!important; font-weight:800!important; border-bottom:1px solid #000!important; color:#000!important; padding-bottom:2px!important; margin-bottom:4px!important; }
+  .pcourt-field { background:#fff!important; border:1.5px solid #000!important; padding:3px!important; }
+  .pcourt-net { background:#000!important; opacity:1!important; height:4px!important; }
+  .pcourt-row+.pcourt-row { border-top:1px dashed #000!important; }
+  .pslot { border:1px solid #666!important; min-height:38px!important; background:#fff!important; }
+  .pslot .posnum { font-size:9px!important; color:#000!important; font-weight:800; }
+  .pslot select { display:none!important; }
+  .pslot .print-val { display:block!important; font-size:11px!important; font-weight:700!important; color:#000!important; margin-top:2px; }
+  
+  .pcourt-extra { margin-top:4px!important; gap:3px!important; }
+  .pcourt-extra-row { border-bottom:1px solid #eee; padding-bottom:1px; }
+  .pcourt-extra-row select { display:none!important; }
+  .pcourt-extra-row .print-val { display:inline-block!important; font-weight:700; font-size:10px; color:#000; }
+  .pcourt-sub-lines { display:block!important; margin-top:4px; border-top:1px solid #000; padding-top:2px; font-size:9px; }
+  .pcourt-sub-lines div { height:14px; border-bottom:1px dotted #888; margin-top:1px; }
+}
+
+.print-only-header, .pslot .print-val, .pcourt-extra-row .print-val, .pcourt-sub-lines { display:none; }
+
+.hist{list-style:none;padding:0;margin:0}
+.hist li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:var(--text-sm)}
+.hist li small{color:var(--muted);display:block}
+.hidden{display:none!important}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:999px;font-size:var(--text-sm);box-shadow:var(--shadow);opacity:0;transition:opacity .2s;pointer-events:none;z-index:10000}
+.toast.show{opacity:1}
+footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20px}
+
 #lockScreen{position:fixed;inset:0;background:var(--navy);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
 .lock-card{background:var(--surface);color:var(--text);border-radius:12px;padding:24px;width:100%;max-width:360px;box-shadow:0 10px 25px rgba(0,0,0,.3);text-align:center;border:1px solid var(--border)}
 </style>
@@ -195,14 +210,16 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
       <div><h1>Spilletid</h1><p>Volleyball spilletidsstyring</p></div>
     </div>
     
-    <!-- HOVEDNAVIGATION -->
     <nav class="tabs" role="tablist" aria-label="Sidenavigation">
       <button role="tab" aria-selected="true" data-tab="kamp">Kampplan</button>
-      <button role="tab" aria-selected="false" data-tab="saeson">Sæson</button>
+      <button role="tab" aria-selected="false" data-tab="saeson">Sæson & Sky</button>
       <button role="tab" aria-selected="false" data-tab="regler">Regler</button>
     </nav>
 
     <div class="nav-actions">
+      <div class="sync-badge" id="syncStatus">
+        <span class="dot">●</span> <span id="syncText">Lokal</span>
+      </div>
       <button class="theme-btn" id="themeToggle" title="Skift lys/mørk tilstand">
         <span id="themeIcon">🌙</span> <span id="themeText">Mørk</span>
       </button>
@@ -211,14 +228,14 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
 </header>
 
 <main class="wrap">
-  <a href="../" class="back-link">← Tilbage til forsiden</a>
+  <a href="../" class="back-link noprint">← Tilbage til forsiden</a>
 
   <!-- KAMPPLAN -->
   <section id="tab-kamp" class="grid">
     <div class="stack noprint">
       <div class="card">
         <h2>Holdet</h2>
-        <p class="sub">Sæt flueben ved dem, der er med. Vælg position, og tryk “Også” for de positioner, spilleren også kan dække.</p>
+        <p class="sub">Sæt flueben ved dem, der er med. Vælg position, og tryk “Også” for sekundære positioner.</p>
         <form class="addrow" id="addForm">
           <input type="text" id="newName" placeholder="Spillerens navn" aria-label="Spillerens navn" autocomplete="off">
           <button class="btn primary" type="submit">Tilføj</button>
@@ -263,7 +280,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
         </label>
         <label class="f" style="display:flex;gap:8px;align-items:flex-start">
           <input type="checkbox" class="chk" id="rules" checked style="margin-top:2px">
-          <span>Følg udskiftningsreglerne<span class="h">En indskiftet spiller kan kun byttes ud med den samme startspiller, og hver plads kan højst skifte ud og ind igen én gang pr. sæt.</span></span>
+          <span>Følg udskiftningsreglerne<span class="h">En indskiftet spiller kan kun byttes ud med den samme startspiller.</span></span>
         </label>
         <label class="f" id="liberoWrap" style="display:flex;gap:8px;align-items:flex-start">
           <input type="checkbox" class="chk" id="useLibero" checked style="margin-top:2px">
@@ -271,7 +288,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
         </label>
         <label class="f" style="display:flex;gap:8px;align-items:flex-start">
           <input type="checkbox" class="chk" id="useSeason" checked style="margin-top:2px">
-          <span>Udlign med sæsonen<span class="h">Spillere med mindst spilletid i tidligere kampe får forrang til de ekstra perioder.</span></span>
+          <span>Udlign med sæsonen<span class="h">Spillere med mindst spilletid i tidligere kampe får forrang.</span></span>
         </label>
         <div class="actions">
           <button class="btn primary" id="genBtn">Lav fair plan</button>
@@ -283,18 +300,48 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
     <div class="stack">
       <div class="card" id="planCard">
         <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start">
-          <div><h2 id="planTitle">Kampplan</h2><p class="sub" id="planSub">Ret opstillingen direkte i banerne nedenfor – reglerne tjekkes løbende.</p></div>
+          <div><h2 id="planTitle">Kampplan</h2><p class="sub" id="planSub">Ret opstillingen direkte i banerne nedenfor.</p></div>
           <div class="actions noprint">
-            <button class="btn" id="printBtn">Print</button>
+            <button class="btn" id="printBtn">Print 5-Sæt Skabelon (A4)</button>
             <button class="btn primary" id="saveBtn">Gem kamp i sæson</button>
           </div>
         </div>
         <div id="planBody"></div>
       </div>
+
+      <!-- 5 BANER PRINT SKABELON (INTERAKTIV & TIL A4 UDSKRIFT) -->
+      <div class="card print-template-sec">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px" class="noprint">
+          <div>
+            <h2>5-Sæt Opstillingsseddel (Print-skabelon)</h2>
+            <p class="sub" style="margin:0">Overfør fra kampplanen, vælg manuelt eller print et tomt ark til kuglepen.</p>
+          </div>
+          <div class="actions">
+            <button class="btn small" id="populate5Btn">Overfør fra kampplan</button>
+            <button class="btn small ghost" id="clear5Btn" style="color:#b3261e">Tøm alle (Blank til kuglepen)</button>
+            <button class="btn small primary" onclick="window.print()">Print A4 Liggende</button>
+          </div>
+        </div>
+
+        <!-- PRINT HEADER (KUN SYNLIG VED PRINT) -->
+        <div class="print-only-header">
+          <table>
+            <tr>
+              <td>Kamp: <span id="printMatchNameHeader">________</span></td>
+              <td>Dato: <span id="printMatchDateHeader">________</span></td>
+              <td>Hold: ____________________</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="print-5court-grid" id="p5Grid">
+          <!-- Genereres dynamisk for Sæt 1 til 5 -->
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- SÆSON -->
+  <!-- SÆSON & SKY -->
   <section id="tab-saeson" class="grid hidden">
     <div class="stack">
       <div class="card">
@@ -303,21 +350,20 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
         <ul class="hist" id="hist"></ul>
       </div>
 
-      <!-- GOOGLE DRIVE SYNC -->
+      <!-- GOOGLE APPS SCRIPT SYNC -->
       <div class="card noprint">
-        <h2>Google Drive Synkronisering</h2>
-        <p class="sub">Gem og del data i skyen, så alle trænere ser de samme oplysninger uden at downloade filer.</p>
+        <h2>Google Apps Script Skysynkronisering</h2>
+        <p class="sub">Forbind til et gratis Google Sheet, så alle trænere ser de samme data i realtid fra enhver enhed.</p>
         <div class="stack">
-          <label class="f">Google Cloud Client ID
-            <input type="text" id="gdriveClientId" placeholder="Indtast Google Client ID">
-            <span class="h">Opret et gratis Web Client ID i Google Cloud Console med Drive scope.</span>
+          <label class="f">Google Apps Script Web App URL
+            <input type="text" id="gasUrl" placeholder="https://script.google.com/macros/s/.../exec">
+            <span class="h">Indsæt URL'en fra din udgivne Apps Script Web App her.</span>
           </label>
           <div class="actions">
-            <button class="btn primary" id="gdriveAuthBtn">Log ind på Google Drive</button>
-            <button class="btn" id="gdriveSaveBtn" disabled>Gem til Drive</button>
-            <button class="btn" id="gdriveLoadBtn" disabled>Hent fra Drive</button>
+            <button class="btn primary" id="gasSaveBtn">Gem & Forbind URL</button>
+            <button class="btn" id="gasSyncNowBtn">Synkroniser Nu</button>
           </div>
-          <p class="count" id="gdriveStatus">Ikke forbundet til Google Drive</p>
+          <p class="count" id="gasStatusText">Status: Forbundet</p>
         </div>
       </div>
 
@@ -340,7 +386,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
       <!-- LOKAL BACKUP -->
       <div class="card noprint">
         <h2>Manuel Backup / Fil</h2>
-        <p class="sub">Data gemmes altid automatisk i din browser. Du kan eksportere en manuel sikkerhedskopi her.</p>
+        <p class="sub">Data gemmes altid automatisk i din browser og på skyserveren.</p>
         <div class="actions">
           <button class="btn" id="exportBtn">Eksportér fil</button>
           <label class="btn" for="importFile">Importér fil</label>
@@ -364,7 +410,7 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
       <p class="sub">Baseret på FIVB's officielle volleyballregler 2025–2028.</p>
       <div class="stack" style="font-size:var(--text-sm)">
         <div><b>Opstilling og positioner.</b> I 5-1 står hæveren diagonalt over for diagonalspilleren, de to kantspillere over for hinanden og de to centre over for hinanden.</div>
-        <div><b>Udskiftninger.</b> Maks. 6 udskiftninger pr. sæt. Startspillere må kun gå ud og ind igen én gang pr. sæt.</div>
+        <div><b>Udskiftninger.</b> Maks. 6/8 udskiftninger pr. sæt. Startspillere må kun gå ud og ind igen én gang pr. sæt.</div>
         <div><b>Libero.</b> Op til 2 liberoer. Liberoen tæller ikke som udskiftning og kan kun spille bagerste række.</div>
       </div>
     </div>
@@ -377,6 +423,8 @@ footer{color:var(--faint);font-size:var(--text-xs);text-align:center;padding:20p
 <script>
 (() => {
 const KEY = 'volley-spilletid-v1';
+const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbzIfR6SMhSvkd5wLmgLNBUvgdvxjHi1WjUL39kFFfXI5ryqAi8SmqAVIqB6qtqxfRHMQg/exec';
+
 const $ = s => document.querySelector(s);
 const uid = () => Math.random().toString(36).slice(2, 10);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -384,20 +432,28 @@ const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.ran
 const clamp = (v,a,b) => Math.max(a,Math.min(b,Math.round(v)));
 
 const POS = { H:'Hæver', D:'Diagonal', K:'Kant', C:'Center', L:'Libero', U:'Alsidig' };
-const PLUR = { H:'Hævere', D:'Diagonaler', K:'Kanter', C:'Centre', L:'Liberoer', U:'Alsidige', A:'Spillerne' };
 const POS_ORDER = ['H','D','K','C','L','U'];
 const FORM = { '51': ['H','K','C','D','K','C'], '42': ['H','K','C','H','K','C'] };
 const DEFAULTS = { sets:3, court:6, segments:1, useSeason:true, formation:'51', useLibero:true, rules:true, maxSubs:6 };
 
+// Data struktur for 5-Sæt Print-skabelon
+let p5Data = Array(5).fill(null).map(() => ({
+  pos: Array(6).fill(''),
+  libero: '',
+  captain: ''
+}));
+
 let state = load();
+let syncTimer = null;
 
 function load(){
   let s = null;
   try { s = JSON.parse(localStorage.getItem(KEY)); } catch(e){}
-  if (!s || !s.players) s = { players: [], matches: [], settings: {}, plan:null, pin:'1234', pinEnabled:true, gdriveClientId:'', theme:'light' };
+  if (!s || !s.players) s = { players: [], matches: [], settings: {}, plan:null, pin:'1234', pinEnabled:true, gasUrl: DEFAULT_GAS_URL, theme:'light' };
   s.settings = Object.assign({}, DEFAULTS, s.settings||{});
   if (s.pin === undefined) s.pin = '1234';
   if (s.pinEnabled === undefined) s.pinEnabled = true;
+  if (!s.gasUrl) s.gasUrl = DEFAULT_GAS_URL;
   if (!s.theme) s.theme = 'light';
   s.players.forEach(p => {
     if (!p.pos) p.pos = p.role==='haever' ? 'H' : 'U';
@@ -406,8 +462,54 @@ function load(){
   return s;
 }
 
-function save(){ 
+function save(triggerSync = true){ 
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} 
+  if (triggerSync) autoSyncGAS();
+}
+
+function updateSyncStatus(type, msg){
+  const badge = $('#syncStatus'), text = $('#syncText'), txt2 = $('#gasStatusText');
+  badge.className = 'sync-badge ' + type;
+  text.textContent = msg;
+  if (txt2) txt2.textContent = 'Status: ' + msg;
+}
+
+function autoSyncGAS(){
+  if (!state.gasUrl) { updateSyncStatus('', 'Lokal'); return; }
+  updateSyncStatus('syncing', 'Gemmer...');
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(state.gasUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state)
+      });
+      updateSyncStatus('ok', 'Synkroniseret');
+    } catch(e) {
+      updateSyncStatus('err', 'Fejl ved sync');
+    }
+  }, 1000);
+}
+
+async function loadFromGAS(){
+  if (!state.gasUrl) return;
+  updateSyncStatus('syncing', 'Henter...');
+  try {
+    const res = await fetch(state.gasUrl);
+    const data = await res.json();
+    if (data && data.players) {
+      state = data;
+      if (!state.gasUrl) state.gasUrl = DEFAULT_GAS_URL;
+      save(false);
+      applyTheme(); applySettings(); renderRoster(); renderPlan(); renderSeason(); render5CourtGrid();
+      updateSyncStatus('ok', 'Synkroniseret');
+      toast('Data hentet fra skyen');
+    }
+  } catch(e) {
+    updateSyncStatus('err', 'Kunne ikke hente');
+  }
 }
 
 function toast(msg){ 
@@ -469,111 +571,28 @@ $('#savePinBtn').addEventListener('click', () => {
   toast('Sikkerhedsindstillinger opdateret');
 });
 
-/* ---------- Google Drive Integration ---------- */
-let accessToken = null;
-let tokenClient = null;
-
-function initGDrive(){
-  $('#gdriveClientId').value = state.gdriveClientId || '';
-  $('#pinEnabled').checked = !!state.pinEnabled;
-}
-
-$('#gdriveClientId').addEventListener('change', e => {
-  state.gdriveClientId = e.target.value.trim();
+/* ---------- GAS Settings ---------- */
+$('#gasUrl').value = state.gasUrl || DEFAULT_GAS_URL;
+$('#gasSaveBtn').addEventListener('click', () => {
+  state.gasUrl = $('#gasUrl').value.trim();
   save();
+  toast('Google Apps Script URL gemt');
+  loadFromGAS();
 });
-
-$('#gdriveAuthBtn').addEventListener('click', () => {
-  const clientId = state.gdriveClientId || $('#gdriveClientId').value.trim();
-  if (!clientId){
-    alert('Indtast venligst et Google Cloud Client ID først.');
-    return;
-  }
-  if (!window.google || !google.accounts || !google.accounts.oauth2){
-    alert('Google Identity Services library indlæses. Prøv igen om et øjeblik.');
-    return;
-  }
-  
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: clientId,
-    scope: 'https://www.googleapis.com/auth/drive.file',
-    callback: (response) => {
-      if (response.access_token) {
-        accessToken = response.access_token;
-        $('#gdriveStatus').textContent = 'Forbundet til Google Drive';
-        $('#gdriveSaveBtn').disabled = false;
-        $('#gdriveLoadBtn').disabled = false;
-        toast('Forbundet til Google Drive');
-      }
-    },
-  });
-  tokenClient.requestAccessToken();
-});
-
-$('#gdriveSaveBtn').addEventListener('click', async () => {
-  if (!accessToken) return;
-  toast('Gemmer til Google Drive...');
-  try {
-    const fileContent = JSON.stringify(state, null, 2);
-    const file = new Blob([fileContent], { type: 'application/json' });
-    const metadata = { name: 'spilletid-data.json', mimeType: 'application/json' };
-    const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-    form.append('file', file);
-
-    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-      method: 'POST',
-      headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
-      body: form
-    });
-    if (res.ok) toast('Gemt på Google Drive!');
-    else alert('Fejl ved gemning på Google Drive');
-  } catch (err) {
-    alert('Kunne ikke gemme på Google Drive: ' + err.message);
-  }
-});
-
-$('#gdriveLoadBtn').addEventListener('click', async () => {
-  if (!accessToken) return;
-  try {
-    const searchRes = await fetch("https://www.googleapis.com/drive/v3/files?q=name='spilletid-data.json' and trashed=false", {
-      headers: { 'Authorization': 'Bearer ' + accessToken }
-    });
-    const searchData = await searchRes.json();
-    if (searchData.files && searchData.files.length > 0) {
-      const fileId = searchData.files[0].id;
-      const fileRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-        headers: { 'Authorization': 'Bearer ' + accessToken }
-      });
-      const data = await fileRes.json();
-      if (data.players && data.matches) {
-        state = data;
-        save();
-        applyTheme();
-        applySettings();
-        renderRoster();
-        renderPlan();
-        renderSeason();
-        toast('Data hentet fra Google Drive!');
-      }
-    } else {
-      alert('Ingen gemt "spilletid-data.json" fundet på Google Drive.');
-    }
-  } catch (err) {
-    alert('Fejl ved hentning fra Google Drive: ' + err.message);
-  }
+$('#gasSyncNowBtn').addEventListener('click', () => {
+  loadFromGAS();
 });
 
 /* ---------- Hjælpefunktioner ---------- */
 const byId = id => state.players.find(p=>p.id===id);
-const nameOf = id => { const p=byId(id); if(p) return p.name; for (const m of state.matches) if (m.names && m.names[id]) return m.names[id]; return '(slettet)'; };
+const nameOf = id => { const p=byId(id); if(p) return p.name; for (const m of state.matches) if (m.names && m.names[id]) return m.names[id]; return id || ''; };
 const pb = (code, extra='') => `<span class="pb ${code} ${extra}" title="${POS[code]||'Plads'}">${code==='A'?'•':code}</span>`;
 
 /* ---------- Tabs Navigation ---------- */
 document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('nav.tabs button').forEach(x => x.setAttribute('aria-selected', x===b));
   ['kamp','saeson','regler'].forEach(t => $('#tab-'+t).classList.toggle('hidden', b.dataset.tab!==t));
-  if (b.dataset.tab==='saeson') { renderSeason(); initGDrive(); }
+  if (b.dataset.tab==='saeson') { renderSeason(); }
 }));
 
 /* ---------- Roster ---------- */
@@ -582,7 +601,7 @@ $('#addForm').addEventListener('submit', e => {
   e.preventDefault();
   const names = $('#newName').value.split(',').map(s=>s.trim()).filter(Boolean);
   names.forEach(n => state.players.push({ id: uid(), name: n, present: true, pos: 'U', alt: [] }));
-  $('#newName').value=''; save(); renderRoster(); $('#newName').focus();
+  $('#newName').value=''; save(); renderRoster(); render5CourtGrid(); $('#newName').focus();
 });
 
 function renderRoster(){
@@ -617,7 +636,7 @@ $('#roster').addEventListener('change', e => {
   const p = byId(li.dataset.id);
   if (e.target.dataset.act==='present') p.present = e.target.checked;
   if (e.target.dataset.act==='pos'){ p.pos = e.target.value; p.alt = p.alt.filter(c=>c!==p.pos); if (p.pos==='U') { p.alt=[]; openAlts.delete(p.id); } }
-  save(); renderRoster();
+  save(); renderRoster(); render5CourtGrid();
 });
 
 $('#roster').addEventListener('click', e => {
@@ -628,12 +647,12 @@ $('#roster').addEventListener('click', e => {
   if (btn.dataset.act==='alt'){ const c=btn.dataset.code; p.alt = p.alt.includes(c)? p.alt.filter(x=>x!==c) : p.alt.concat(c); save(); renderRoster(); }
   if (btn.dataset.act==='del'){
     if (!confirm(`Fjern ${p.name} fra holdet?`)) return;
-    state.players = state.players.filter(x=>x.id!==p.id); save(); renderRoster();
+    state.players = state.players.filter(x=>x.id!==p.id); save(); renderRoster(); render5CourtGrid();
   }
 });
 
 /* ---------- Settings ---------- */
-const settingIds = ['#sets','#court','#segments','#useSeason','#formation','#useLibero','#rules','#maxSubs'];
+const settingIds = ['#sets','#court','#segments','#useSeason','#formation','#useLibero','#rules','#maxSubs','#matchName','#matchDate'];
 function readSettings(){
   const s = state.settings;
   s.sets = clamp(+$('#sets').value||3,1,9);
@@ -661,6 +680,12 @@ function syncSettingsUI(){
   $('#courtWrap').style.display = fri ? '' : 'none';
   $('#liberoWrap').style.display = fri ? 'none' : 'flex';
   $('#maxSubsWrap').style.opacity = $('#segments').value==='1' ? .55 : 1;
+  
+  // Opdater print header
+  const mn = $('#matchName').value.trim() || '__________';
+  const md = $('#matchDate').value || '__________';
+  $('#printMatchNameHeader').textContent = mn;
+  $('#printMatchDateHeader').textContent = md;
 }
 settingIds.forEach(s => $(s).addEventListener('change', () => { readSettings(); renderPosOverview(); }));
 
@@ -795,7 +820,7 @@ function scorePlan(ctx, segs){
 function makePlan(){
   const s = readSettings();
   const ctx = buildContext();
-  if (ctx.regular.length < ctx.C) return { error:`Der skal mindst være ${ctx.C} spillere (ud over liberoer) med – der er kun ${ctx.regular.length}.` };
+  if (ctx.regular.length < ctx.C) return { error:`Der skal mindst være ${ctx.C} spillere med – der er kun ${ctx.regular.length}.` };
   let best=null, bestScore=Infinity;
   const t0 = performance.now();
   for (let r=0;r<20000 && (r<300 || performance.now()-t0<600);r++){ const segs = attempt(ctx); const sc = scorePlan(ctx, segs); if (sc<bestScore){ bestScore=sc; best=segs; } }
@@ -833,6 +858,9 @@ function renderPlan(err){
   }
   html += `</tbody></table></div><div class="court">${plan.segs.map((sg,k) => renderCourt(plan,sg,k)).join('')}</div>`;
   body.innerHTML = html;
+  
+  // Automatisk overførsel til 5-sæt skabelonen ved ny plan
+  populate5FromPlan();
 }
 
 function slotSelect(plan, sg, k, i){
@@ -854,9 +882,6 @@ function renderCourt(plan, sg, k){
 
   let gridContent = '';
   if (sg.ids.length === 6) {
-    // Volleyball positioner:
-    // Ved nettet (Forrest): Pos 4 (index 3), Pos 3 (index 2), Pos 2 (index 1)
-    // Bagved (Bagerst): Pos 5 (index 4), Pos 6 (index 5), Pos 1 (index 0)
     gridContent = `
       <div class="frow">
         ${cell(3)}
@@ -883,6 +908,108 @@ $('#planBody').addEventListener('change', e => {
   save(); renderPlan();
 });
 
+/* ---------- 5-BANER PRINT SKABELON FUNKTIONER ---------- */
+function render5CourtGrid(){
+  const grid = $('#p5Grid');
+  const players = state.players.filter(p=>p.present);
+  
+  const playerOptions = (selectedId) => {
+    return `<option value="">– – –</option>` + 
+      players.map(p => `<option value="${p.id}" ${p.id===selectedId?'selected':''}>${esc(p.name)}</option>`).join('');
+  };
+
+  const pcell = (setIdx, posIdx, posName) => {
+    const curVal = p5Data[setIdx].pos[posIdx] || '';
+    const nameStr = nameOf(curVal);
+    return `
+      <div class="pslot">
+        <div class="posnum">Pos ${posName}</div>
+        <select data-set="${setIdx}" data-pos="${posIdx}">${playerOptions(curVal)}</select>
+        <span class="print-val">${esc(nameStr || '________')}</span>
+      </div>
+    `;
+  };
+
+  let html = '';
+  for (let s = 0; s < 5; s++){
+    const libVal = p5Data[s].libero || '';
+    const capVal = p5Data[s].captain || '';
+
+    html += `
+      <div class="pcourt-card">
+        <div class="pcourt-header">SÆT ${s+1}</div>
+        <div class="pcourt-field">
+          <div class="pcourt-net"></div>
+          <div class="pcourt-row">
+            ${pcell(s, 3, 'IV')}
+            ${pcell(s, 2, 'III')}
+            ${pcell(s, 1, 'II')}
+          </div>
+          <div class="pcourt-row">
+            ${pcell(s, 4, 'V')}
+            ${pcell(s, 5, 'VI')}
+            ${pcell(s, 0, 'I')}
+          </div>
+        </div>
+        <div class="pcourt-extra">
+          <div class="pcourt-extra-row">
+            <label>Libero:</label>
+            <select data-set="${s}" data-extra="libero">${playerOptions(libVal)}</select>
+            <span class="print-val">${esc(nameOf(libVal) || '____')}</span>
+          </div>
+          <div class="pcourt-extra-row">
+            <label>Anfører (C):</label>
+            <select data-set="${s}" data-extra="captain">${playerOptions(capVal)}</select>
+            <span class="print-val">${esc(nameOf(capVal) || '____')}</span>
+          </div>
+          <div class="pcourt-sub-lines">
+            <b>Udskiftninger:</b>
+            <div></div><div></div><div></div><div></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  grid.innerHTML = html;
+}
+
+$('#p5Grid').addEventListener('change', e => {
+  const sel = e.target.closest('select'); if (!sel) return;
+  const setIdx = +sel.dataset.set;
+  if (sel.dataset.pos !== undefined){
+    const posIdx = +sel.dataset.pos;
+    p5Data[setIdx].pos[posIdx] = sel.value;
+  } else if (sel.dataset.extra){
+    p5Data[setIdx][sel.dataset.extra] = sel.value;
+  }
+  render5CourtGrid();
+});
+
+function populate5FromPlan(){
+  if (!state.plan || !state.plan.segs) return;
+  const plan = state.plan;
+  for (let s = 0; s < 5; s++){
+    const sg = plan.segs[s];
+    if (sg){
+      p5Data[s].pos = sg.ids.map(id => id || '');
+      p5Data[s].libero = sg.lib || (plan.libs && plan.libs[0]) || '';
+    }
+  }
+  render5CourtGrid();
+}
+
+$('#populate5Btn').addEventListener('click', () => {
+  populate5FromPlan();
+  toast('5-Sæt skabelon opdateret fra planen');
+});
+
+$('#clear5Btn').addEventListener('click', () => {
+  p5Data = Array(5).fill(null).map(() => ({ pos: Array(6).fill(''), libero: '', captain: '' }));
+  render5CourtGrid();
+  toast('Skabelon nulstillet (Klar til manuel skrift)');
+});
+
+/* ---------- Event Listeners ---------- */
 $('#genBtn').addEventListener('click', () => {
   const r = makePlan();
   if (r.error){ state.plan=null; save(); renderPlan(r.error); return; }
@@ -927,16 +1054,17 @@ $('#importFile').addEventListener('change', async e => {
     const d=JSON.parse(await f.text()); 
     if(!d.players||!d.matches) throw 0; 
     localStorage.setItem(KEY, JSON.stringify(d)); 
-    state=load(); save(); applyTheme(); applySettings(); renderRoster(); renderPlan(); renderSeason(); toast('Data importeret'); 
+    state=load(); save(); applyTheme(); applySettings(); renderRoster(); renderPlan(); renderSeason(); render5CourtGrid(); toast('Data importeret'); 
   } catch(_){ alert('Filen kunne ikke læses.'); }
   e.target.value='';
 });
 $('#resetBtn').addEventListener('click', () => { 
   if(!confirm('Slet alle spillere og hele sæsonen?')) return; 
-  localStorage.removeItem(KEY); state=load(); applyTheme(); applySettings(); renderRoster(); renderPlan(); renderSeason(); 
+  localStorage.removeItem(KEY); state=load(); applyTheme(); applySettings(); renderRoster(); renderPlan(); renderSeason(); render5CourtGrid(); 
 });
 
-applyTheme(); checkLock(); applySettings(); renderRoster(); renderPlan();
+applyTheme(); checkLock(); applySettings(); renderRoster(); renderPlan(); render5CourtGrid();
+if (state.gasUrl) loadFromGAS();
 })();
 </script>
 </body>
